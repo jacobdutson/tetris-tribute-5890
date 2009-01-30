@@ -1,0 +1,75 @@
+Constants:
+	TILE_NODRAW	-1
+	TILE_BLACK	0
+	TILE_GREY		1
+	TILE_BLUE		2
+	TILE_RED		3
+	TILE_PURPLE	4
+	TILE_GREEN		5
+	TILE_YELLOW	6
+	TILE_WHITE		7
+	TILE_SILVER	8
+Structs:
+	Piece
+		int[][] size;
+		int x;
+		int y;
+Enums:
+	GameState
+		State_Running = 0,
+		State_Menu,
+		State_Quitting;
+Classes:
+	Main Class					// Calls game code
+
+
+	Graphics					// Game code calls this when it needs to draw.
+		Public:
+			void drawPiece(piece aPiece);					// draw the piece at its x and y
+			void drawString(int x, int y, string aString, int fontSize);	// draw aString at x and y in font size: fontSize
+			void drawGameBoard(int[][] map);				// draw the gameboard using map[][]
+
+
+	AI						// Manages AI.
+
+
+	HighScore					// Keeps a list of high scores.
+		Private:
+			int[]	scoreArray		// stores the scores. 10 elements
+			string[]	nameArray		// stores the names. 10 elements
+		Public:
+			LoadFile();			// loads all the high scores
+			SaveFile();			// saves all the high scores
+			AddHighScore(int Score)	// takes score, checks if its a high score, if it is, get name and save score
+
+
+	Credits						// Stores credits.
+		Private:
+			string[] creditLines;		// Holds the credits
+		Public:
+			void startCredits();		// Start showing the credits
+			void stopCredits();		// Stop showing the credits
+
+
+	GamePlay					// Actual game code.
+		Private:
+			GameState gameState; 	// Holds the Game State
+			Piece	CurPiece;		// The Current Piece
+			Piece 	PrePiece;		// The Preview Piece
+		Public:
+			void GameInit();		// Handle game initialization code
+			void GameUpdate();		// The main game loop
+			void GameDone();		// Any clean up code
+			void MakePiece();		// If no PrePiece exists, create one. make CurPiece the PrePiece. Randomize new PrePiece.
+			bool MovePiece(int x, int y);	// move piece over x tiles and down y tiles, then check for collision.
+			bool RotatePiece();		// Rotate Piece and put in temp array, check collision. If no collision, make CurPiece the temp piece
+			bool CollisionTest();		// Make sure the CurPiece isn't colliding with anything on map[][] or the screen bounds.
+			void ClearLine();		// Clear the line, Add to score, Apply gravity
+
+
+	Menu						// Stores menu items.
+		Private:
+			string[] MenuItems;		// Holds Resume, New, HighScores, Credits, Exit, etc
+		Public:
+			void DrawMenu();
+
