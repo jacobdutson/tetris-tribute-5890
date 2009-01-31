@@ -31,7 +31,67 @@ Classes:
 
 
 	AI						// Manages AI.
-
+		Private:
+			int [] inputsQueue		// Stores a queue of keys that the AI has pressed.
+			Piece previewPiece		// The upcoming piece for next time.
+			Piece currentPiece		// The current piece to move.
+			int [][] currentMap		// Keeps a snapshot of the map at the time the piece was dropped.
+			List<Location> locations	// Stores each location detected in the map to place the piece.
+			int [] maximums			// Stores the maximum values for each location. Used to make findLowestLocation method run faster.
+			Location chosenLocation		// This is the location the AI will try to place the piece in.
+			SaveState Class
+				Private:
+					Piece currentPiece;
+					int locationIndex;
+					int colIndex;
+					int rowIndex;
+					int restoreState;
+				Public:
+					SaveState();	// Initializes the data members.
+					int save();	// Called by AI class members when the AI class notices the GamePlay class needs the AI to pause.
+					int resume();	// Called by the AI class members when the AI class can continue working. 
+			Point Class
+				Private:
+					int x
+					int y
+				Public:
+					int X()		// Gets and Sets the value of x.
+					int Y()		// Gets and Sets the value of y.
+			Location Class
+				Private:
+					Point [] points	// Arrays of cells on the game board that will be used in this location.
+					int rank
+				Public:
+					Location(int x, int y, int rank)	// Initialize the location to default values. 					
+					int Rank()	// Gets and Sets the value of rank.
+					int getMaximumY()	// Returns the values of the largest Y value of the points in the location.
+		     Methods:
+			int checkForGaps(Location location)	// Checks if any gaps are left underneath the location on the game board.
+			int numLinesCleared(Location location)	// Checks to see how many lines (rows) on the game board will clear if the piece is placed in this location.
+			int numFilledCells(Location location) 	// Checks to see how many cells will be filled in the lines crossed by the piece.
+			int findLowestLocation()	// Searches for the lowest location on the game board. Returns the index of that location.
+			int updateRankOnLowest(Location location)	// Adds the lowest location bonus to the lowest location.
+			void chooseMaxRankedLocation()	// Returns the Location	with the largest rank. This will be the destination location.
+			void findLocation()		// Searches the board and calls the above functions to choose a location.
+			void movePiece()	// Calls the functions below to move the AI game piece.
+			void findPath()		// Determines how many spaces to move the game piece to reach it's destination.
+			void leftKeyPress()	// "Presses" the left key as many times as needed to move the piece left. Sets AI key flags.
+			void rightKeyPress()	// "Presses" the right key as many times as needed to move the piece rightt. Sets AI key flags.
+			void rotateKeyPress()	// "Presses" the rotate key as many times as needed to rotate the piece. Sets AI key flags.
+			void speedUpKeyPress()	// "Presses" the speed up key as many times as needed to speed up the piece. Sets AI key flags.
+		Public:
+			const int NO_KEYS_PRESSED = 0;
+			const int LEFT_KEY_PRESS = 1;
+			const int RIGHT_KEY_PRESS = 2;
+			const int ROTATE_KEY_PRESS = 3;
+			const int SPEED_UP_KEY_PRESS = 4;
+		     Methods:
+			AI()				// Constructor to initialize the AI class.  A new instance should be called for each time the game is in attract mode.
+			int playCurrentPiece(int [][] currentMap, Piece currentPiece, Piece previousPiece)	// Called inside attract mode play 
+			int keyPressed()	// Returns which key the AI is pressing. Sends the key signals to the game class to control the AI piece.
+			int pause()		// Tells the AI to pause processing.
+			int resume()		// Tells the AI to resume processing.
+			void turnOff()	// Tells the AI to shut down.  Called when leaving attract mode.  Stops AI from signaling input controls.
 
 	HighScore					// Keeps a list of high scores.
 		Private:
