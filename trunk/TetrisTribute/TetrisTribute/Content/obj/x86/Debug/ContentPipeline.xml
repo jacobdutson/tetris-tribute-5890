@@ -6,15 +6,15 @@
       <TargetPlatform>Windows</TargetPlatform>
       <BuildConfiguration>Debug</BuildConfiguration>
       <CompressContent>false</CompressContent>
-      <RootDirectory>C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\Content\</RootDirectory>
-      <LoggerRootDirectory>C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\</LoggerRootDirectory>
-      <IntermediateDirectory>C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\Content\obj\x86\Debug\</IntermediateDirectory>
-      <OutputDirectory>C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\</OutputDirectory>
+      <RootDirectory>R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\Content\</RootDirectory>
+      <LoggerRootDirectory>R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\</LoggerRootDirectory>
+      <IntermediateDirectory>R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\Content\obj\x86\Debug\</IntermediateDirectory>
+      <OutputDirectory>R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\</OutputDirectory>
     </Settings>
     <Assemblies>
       <Assembly>
         <Key>C:\Windows\assembly\GAC_32\Microsoft.Xna.Framework.Content.Pipeline\3.0.0.0__6d5c3888ef60e27d\Microsoft.Xna.Framework.Content.Pipeline.dll</Key>
-        <Value>2009-01-23T14:06:39.2445-07:00</Value>
+        <Value>2009-01-29T16:23:06.0209261-07:00</Value>
       </Assembly>
     </Assemblies>
   </Asset>
