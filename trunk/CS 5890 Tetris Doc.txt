@@ -74,11 +74,8 @@ Classes:
 			void chooseMaxRankedLocation()	// Returns the Location	with the largest rank. This will be the destination location.
 			void findLocation()		// Searches the board and calls the above functions to choose a location.
 			void movePiece()	// Calls the functions below to move the AI game piece.
-			void findPath()		// Determines how many spaces to move the game piece to reach it's destination.
-			void leftKeyPress()	// "Presses" the left key as many times as needed to move the piece left. Sets AI key flags.
-			void rightKeyPress()	// "Presses" the right key as many times as needed to move the piece rightt. Sets AI key flags.
-			void rotateKeyPress()	// "Presses" the rotate key as many times as needed to rotate the piece. Sets AI key flags.
-			void speedUpKeyPress()	// "Presses" the speed up key as many times as needed to speed up the piece. Sets AI key flags.
+			void findPath()		// Determines how to move the game piece to reach it's destination.
+			void keyPress()	// "Presses" the "keys" as many times as needed to move, rotate, or speed up the piece. Adds the input value to the inputs queue.
 		Public:
 			const int NO_KEYS_PRESSED = 0;
 			const int LEFT_KEY_PRESS = 1;
@@ -89,6 +86,7 @@ Classes:
 			AI()				// Constructor to initialize the AI class.  A new instance should be called for each time the game is in attract mode.
 			int playCurrentPiece(int [][] currentMap, Piece currentPiece, Piece previousPiece)	// Called inside attract mode play 
 			int keyPressed()	// Returns which key the AI is pressing. Sends the key signals to the game class to control the AI piece.
+			int numberOfInputs()	// Returns the number of elements in the inputs queue.
 			int pause()		// Tells the AI to pause processing.
 			int resume()		// Tells the AI to resume processing.
 			void turnOff()	// Tells the AI to shut down.  Called when leaving attract mode.  Stops AI from signaling input controls.
