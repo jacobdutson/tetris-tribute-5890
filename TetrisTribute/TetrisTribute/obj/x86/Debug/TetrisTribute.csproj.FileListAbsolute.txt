@@ -4,3 +4,9 @@ C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\Tetr
 C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.exe
 C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.pdb
+R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\bin\x86\Debug\TetrisTribute.exe
+R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\bin\x86\Debug\TetrisTribute.pdb
+R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\obj\x86\Debug\ResolveAssemblyReference.cache
+R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.exe
+R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.pdb
