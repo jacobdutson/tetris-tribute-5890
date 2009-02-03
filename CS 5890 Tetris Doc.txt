@@ -65,12 +65,13 @@ Classes:
 					Location(int x, int y, int rank)	// Initialize the location to default values. 					
 					int Rank()	// Gets and Sets the value of rank.
 					int getMaximumY()	// Returns the values of the largest Y value of the points in the location.
+					Point [] getLowestPoints()	// Returns the lowest points in the game piece.
+					void setPoints(Piece tempPiece, int column)		// Sets the location's points to match the points of the tempPiece adjusted so that the left most-side of the tempPiece is in the column, column.	
 		     Methods:
-			int checkForGaps(Location location)	// Checks if any gaps are left underneath the location on the game board.
+			bool checkForGaps(Location location)	// Checks if any gaps are left underneath the location on the game board.
 			int numLinesCleared(Location location)	// Checks to see how many lines (rows) on the game board will clear if the piece is placed in this location.
 			int numFilledCells(Location location) 	// Checks to see how many cells will be filled in the lines crossed by the piece.
-			int findLowestLocation()	// Searches for the lowest location on the game board. Returns the index of that location.
-			int updateRankOnLowest(Location location)	// Adds the lowest location bonus to the lowest location.
+			int findLowestLocation()	// Searches for the lowest location on the game board. Returns the row index of that location.
 			void chooseMaxRankedLocation()	// Returns the Location	with the largest rank. This will be the destination location.
 			void findLocation()		// Searches the board and calls the above functions to choose a location.
 			void movePiece()	// Calls the functions below to move the AI game piece.
@@ -85,11 +86,11 @@ Classes:
 		     Methods:
 			AI()				// Constructor to initialize the AI class.  A new instance should be called for each time the game is in attract mode.
 			int playCurrentPiece(int [][] currentMap, Piece currentPiece, Piece previousPiece)	// Called inside attract mode play 
-			int keyPressed()	// Returns which key the AI is pressing. Sends the key signals to the game class to control the AI piece.
+			int getKeyPressed()	// Returns which key the AI is pressing. Sends the key signals to the game class to control the AI piece.
 			int numberOfInputs()	// Returns the number of elements in the inputs queue.
 			int pause()		// Tells the AI to pause processing.
 			int resume()		// Tells the AI to resume processing.
-			void turnOff()	// Tells the AI to shut down.  Called when leaving attract mode.  Stops AI from signaling input controls.
+			int kill()		// Tells the AI to kill processing.
 
 	HighScore					// Keeps a list of high scores.
 		Private:
