@@ -18,10 +18,28 @@ namespace TetrisTribute
     /// </summary>
     public class GamePlay : Microsoft.Xna.Framework.Game
     {
+        const int ROWS = 20; //about 18-22
+        const int COLUMNS = 10;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         HighScores high;
+        GamePiece piece;
         String[][] highScores;
+        private KeyboardState oldState;
+
+        //delegate that is used to call the correct update function based on state
+        delegate void updateDelegate(GameTime gameTime);
+        //delegate that is used to call the correct draw function based on state
+        delegate void drawDelegate(GameTime gameTime);
+
+        updateDelegate update;
+        drawDelegate draw;
+
+        int[][] gameBoard;
+        int score;
+        double dropTime;
+        double dropSpeed;
 
         public GamePlay()
         {
@@ -36,8 +54,26 @@ namespace TetrisTribute
         /// and initialize them as well.
         /// </summary>
         protected override void Initialize()
-        {
+        {   
             // TODO: Add your initialization logic here
+            score = 0;
+            //TODO set drop speed
+            dropTime = 5000;
+            dropSpeed = 5000;
+
+            update = new updateDelegate(menuUpdate);
+
+
+            //initialize the game board
+            gameBoard =new int[ROWS][];
+            for (int i = 0; i < ROWS; i++)
+            {
+                gameBoard[i] = new int[COLUMNS];
+                for (int j = 0; j < COLUMNS; j++)
+                {
+                    gameBoard[i][j] = 0;
+                }
+            }
 
             base.Initialize();
         }
@@ -52,7 +88,10 @@ namespace TetrisTribute
             spriteBatch = new SpriteBatch(GraphicsDevice);
            
             high = new HighScores();
-            highScores = high.getScores();
+            piece = new GamePiece();
+            
+            
+            
             
             // TODO: use this.Content to load your game content here
         }
@@ -77,7 +116,7 @@ namespace TetrisTribute
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
             
-            // TODO: Add your update logic here
+            update(gameTime);           
 
             base.Update(gameTime);
         }
@@ -90,10 +129,80 @@ namespace TetrisTribute
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            
-            // TODO: Add your drawing code here
+            draw(gameTime);
 
             base.Draw(gameTime);
         }
+
+        private void gameUpdate(GameTime gameTime)
+        {
+            KeyboardState state = Keyboard.GetState();
+
+            dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
+            if (dropTime < 0)
+            {
+                //TODO drop piece
+                dropTime = dropSpeed;
+            }
+
+            oldState = state;
+        }
+
+        private void menuUpdate(GameTime gameTime)
+        {
+            KeyboardState state = Keyboard.GetState();
+
+            if (state.IsKeyDown(Keys.Up))
+            {
+                //change selected item
+            }
+            if (state.IsKeyDown(Keys.Down))
+            {
+                //change selected item
+            }
+            if (state.IsKeyDown(Keys.Enter))
+            {
+                //get selected item
+                //change update and draw delegates
+                update = new updateDelegate (gameUpdate);
+            }
+
+            oldState = state;
+        }
+
+        private void creditsUpdate(GameTime gameTime)
+        {
+            KeyboardState state = Keyboard.GetState();
+
+            oldState = state;
+        }
+
+        private void scoresUpdate(GameTime gameTime)
+        {
+            KeyboardState state = Keyboard.GetState();
+
+            oldState = state;
+        }
+
+        private void menuDraw(GameTime gameTime)
+        {
+
+        }
+
+        private void gameDraw(GameTime gameTime)
+        {
+
+        }
+
+        private void creditsDraw(GameTime gameTime)
+        {
+
+        }
+
+        private void scoreDraw(GameTime gameTime)
+        {
+
+        }
+
     }
 }
