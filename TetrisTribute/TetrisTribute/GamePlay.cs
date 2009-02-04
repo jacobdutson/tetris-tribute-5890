@@ -18,8 +18,15 @@ namespace TetrisTribute
     /// </summary>
     public class GamePlay : Microsoft.Xna.Framework.Game
     {
+        //number of rows and columns on game board
         const int ROWS = 20; //about 18-22
         const int COLUMNS = 10;
+       
+        const int PLAY = 0;
+        const int HIGH = 1;
+        const int CREDITS = 2;
+        const int EXIT = 3;
+
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -40,6 +47,9 @@ namespace TetrisTribute
         int score;
         double dropTime;
         double dropSpeed;
+        bool creditsFinished;
+
+        int selectedMenuItem;
 
         public GamePlay()
         {
@@ -54,14 +64,18 @@ namespace TetrisTribute
         /// and initialize them as well.
         /// </summary>
         protected override void Initialize()
-        {   
+        {
+            selectedMenuItem = PLAY;
             // TODO: Add your initialization logic here
             score = 0;
+
             //TODO set drop speed
             dropTime = 5000;
             dropSpeed = 5000;
+            creditsFinished = false;
 
             update = new updateDelegate(menuUpdate);
+            draw = new drawDelegate(menuDraw);
 
 
             //initialize the game board
@@ -112,6 +126,7 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //DO not add any code to this function unless it is needed for every state(menu, game, credits, scores)
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
@@ -127,8 +142,10 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            //DO not add any code to this function unless it is needed for every state(menu, game, credits, scores)
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            //this will call the function of the given state
             draw(gameTime);
 
             base.Draw(gameTime);
@@ -137,6 +154,16 @@ namespace TetrisTribute
         private void gameUpdate(GameTime gameTime)
         {
             KeyboardState state = Keyboard.GetState();
+
+            if (state.IsKeyDown(Keys.Right) && !oldState.IsKeyDown(Keys.Right))
+            {
+                //move one space to the right
+            }
+
+            if (state.IsKeyDown(Keys.Right) && oldState.IsKeyDown(Keys.Right))
+            {
+                //get time and move right accordingly
+            }
 
             dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
             if (dropTime < 0)
@@ -152,19 +179,51 @@ namespace TetrisTribute
         {
             KeyboardState state = Keyboard.GetState();
 
-            if (state.IsKeyDown(Keys.Up))
+            //TODO make sure key was released and add XBOX CONTROLS
+            if (state.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
             {
-                //change selected item
+                //change the selected menu item up one position
+                //??DO we want to wrap the selection if so have an else = 3
+                if (selectedMenuItem > 0)
+                {
+                    selectedMenuItem--;
+                    Console.WriteLine("Selection Changed to " + selectedMenuItem);
+                }
             }
-            if (state.IsKeyDown(Keys.Down))
+            if (state.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down))
             {
-                //change selected item
+                //change selected item down one
+                //??DO we want to wrap the selection if so have an else = 0
+                if (selectedMenuItem < 3)
+                {
+                    selectedMenuItem++;
+                    Console.WriteLine("Selection Changed to " + selectedMenuItem);
+                }
             }
-            if (state.IsKeyDown(Keys.Enter))
+            if (state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
             {
                 //get selected item
                 //change update and draw delegates
-                update = new updateDelegate (gameUpdate);
+                if (selectedMenuItem == PLAY)
+                {
+                    update = new updateDelegate(gameUpdate);
+                    draw = new drawDelegate(gameDraw);
+                }
+                else if (selectedMenuItem == HIGH)
+                {
+                    update = new updateDelegate(scoresUpdate);
+                    draw = new drawDelegate(scoreDraw);
+                }
+                else if (selectedMenuItem == CREDITS)
+                {
+                    update = new updateDelegate(creditsUpdate);
+                    draw = new drawDelegate(creditsDraw);
+                }
+                else if (selectedMenuItem == EXIT)
+                {
+                    //exit the game
+                    this.Exit();
+                }
             }
 
             oldState = state;
@@ -173,6 +232,16 @@ namespace TetrisTribute
         private void creditsUpdate(GameTime gameTime)
         {
             KeyboardState state = Keyboard.GetState();
+            
+            //if user presses enter or esc return back to the menu
+            if ((state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
+                || (state.IsKeyDown(Keys.Escape) && !oldState.IsKeyDown(Keys.Escape))
+                || creditsFinished)
+            {
+                update = new updateDelegate(menuUpdate);
+                draw = new drawDelegate(menuDraw);
+            }
+            exitTime = exitTime - gameTime.ElapsedGameTime.Milliseconds;
 
             oldState = state;
         }
@@ -180,7 +249,10 @@ namespace TetrisTribute
         private void scoresUpdate(GameTime gameTime)
         {
             KeyboardState state = Keyboard.GetState();
-
+            //if got high score
+            //input to get name etc
+            //enter to finish
+            //else entertoexit
             oldState = state;
         }
 
@@ -196,7 +268,7 @@ namespace TetrisTribute
 
         private void creditsDraw(GameTime gameTime)
         {
-
+            //TODO set creditsFinished = true when credits are finished
         }
 
         private void scoreDraw(GameTime gameTime)
