@@ -70,7 +70,7 @@ Classes:
 		     Methods:
 			bool checkForGaps(Location location)	// Checks if any gaps are left underneath the location on the game board.
 			int numLinesCleared(Location location)	// Checks to see how many lines (rows) on the game board will clear if the piece is placed in this location.
-			int numFilledCells(Location location) 	// Checks to see how many cells will be filled in the lines crossed by the piece.
+			//int numFilledCells(Location location) 	// Checks to see how many cells will be filled in the lines crossed by the piece.
 			int findLowestLocation()	// Searches for the lowest location on the game board. Returns the row index of that location.
 			void chooseMaxRankedLocation()	// Returns the Location	with the largest rank. This will be the destination location.
 			void findLocation()		// Searches the board and calls the above functions to choose a location.
