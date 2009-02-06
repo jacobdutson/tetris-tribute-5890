@@ -9,14 +9,14 @@ namespace TetrisTribute
     {
         //integers representing a color
         //TODO NEED TO CHANGE VALUES
-        const int green = 5;
-        const int red = 5; 
-        const int purple = 5;
-        const int blue = 6;
-        const int yellow = 7;
-        const int cyan = 7;
-        const int orange = 6;
-        const int empty = 0;
+        public const int green = 5;
+        public const int red = 5;
+        public const int purple = 5;
+        public const int blue = 6;
+        public const int yellow = 7;
+        public const int cyan = 7;
+        public const int orange = 6;
+        public const int empty = 0;
 
         Random random;
 

@@ -19,13 +19,13 @@ namespace TetrisTribute
     public class GamePlay : Microsoft.Xna.Framework.Game
     {
         //number of rows and columns on game board
-        const int ROWS = 20; //about 18-22
-        const int COLUMNS = 10;
+        public const int ROWS = 20; //about 18-22
+        public const int COLUMNS = 10;
        
-        const int PLAY = 0;
-        const int HIGH = 1;
-        const int CREDITS = 2;
-        const int EXIT = 3;
+        public const int PLAY = 0;
+        public const int HIGH = 1;
+        public const int CREDITS = 2;
+        public const int EXIT = 3;
 
 
         GraphicsDeviceManager graphics;
@@ -273,7 +273,7 @@ namespace TetrisTribute
 
         private void scoreDraw(GameTime gameTime)
         {
-
+            
         }
 
     }
