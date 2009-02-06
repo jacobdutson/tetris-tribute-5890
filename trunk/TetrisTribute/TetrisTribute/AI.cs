@@ -13,24 +13,11 @@ namespace TetrisTribute
 {
     class AI
     {
-        //Constants from Game Piece class
-        //integers representing a color
-        //TODO NEED TO CHANGE VALUES
-        const int green = 5;
-        const int red = 5;
-        const int purple = 5;
-        const int blue = 6;
-        const int yellow = 7;
-        const int cyan = 7;
-        const int orange = 6;
-        const int empty = 0;
-
-
         // Define global constants:
         public const int GAME_BOARD_X_MIN = 0;
         public const int GAME_BOARD_Y_MIN = 0;
-        public const int GAME_BOARD_X_MAX = 10;
-        public const int GAME_BOARD_Y_MAX = 20;
+        public const int GAME_BOARD_X_MAX = GamePlay.COLUMNS;
+        public const int GAME_BOARD_Y_MAX = GamePlay.ROWS;
         public const int NO_KEYS_PRESSED = 0;
         public const int LEFT_KEY_PRESS = 1;
         public const int RIGHT_KEY_PRESS = 2;
@@ -42,16 +29,17 @@ namespace TetrisTribute
         public const int LOWEST_BONUS = 10;
 
         // Declare class data members:
-        private Queue<int> inputsQueue;		// Stores a queue of keys that the AI has pressed.
-        private Piece previewPiece;		// The upcoming piece for next time.
-        private Piece currentPiece;		// The current piece to move.
-        private Piece movePiece;        // Temporary copy of the current piece, used in the functions that managed movement.
-        private int[,] currentBoard;		// Keeps a snapshot of the map at the time the piece was dropped.
+        private Queue<int> inputsQueue;	    // Stores a queue of keys that the AI has pressed.
+        private Piece currentPiece;		    // The current piece to move.
+        private Piece movePiece;            // Temporary copy of the current piece, used in the functions that manage movement.
+        private Location moveLocation;      // Temporary copy of the current piece, used in the functions that manage movement.
+        private int[,] currentBoard;	    // Keeps a snapshot of the map at the time the piece was dropped.
+        private int[] columnTops;           // Array holding the current height of each column in the map.
         private List<Location> locations;	// Stores each location detected in the map to place the piece.
-        private Location chosenLocation;		// This is the location the AI will try to place the piece in.
-        private bool kill;      // Gives the AI class a kill signal.
-        private bool pause;     // Gives the AI class a pause signal.
-        private bool resume;    // Gives the AI class a resume signal.
+        private Location chosenLocation;	// This is the location the AI will try to place the piece in.
+        private bool kill;                  // Gives the AI class a kill signal.
+        private bool pause;                 // Gives the AI class a pause signal.
+        private bool resume;                // Gives the AI class a resume signal.
         
         // Define class methods:
         /**
@@ -64,11 +52,16 @@ namespace TetrisTribute
         {
             // Allocate space for data members:
             inputsQueue = new Queue<int>();
-            previewPiece = new Piece();
             currentPiece = new Piece();
+            movePiece = new Piece();
+            moveLocation = new Location();
             currentBoard = new int [GAME_BOARD_X_MAX , GAME_BOARD_Y_MAX];
+            columnTops = new int[GAME_BOARD_X_MAX];
             locations = new List<Location>();
-            chosenLocation = new Location();           
+            chosenLocation = new Location();
+            kill = false;
+            pause = false;
+            resume = false;
         }
 
         public bool Kill
@@ -104,7 +97,7 @@ namespace TetrisTribute
          * next game piece that the AI will need to play
          * @return -- Nothing.
          */
-        public void playCurrentPiece(int[][] board, int[][] cPiece, int[][] pPiece)
+        public void playCurrentPiece(int[][] board, int[] colTops, int[][] cPiece, int cPieceX, int cPieceY)
         {
             // Copy needed data from arguments to local stores:
             // Check if the board exists:
@@ -122,6 +115,16 @@ namespace TetrisTribute
             {
                 throw new NullReferenceException("AI Class playCurrentPiece method:  The map object passed into the function was a NULL pointer.");
             }
+            // Check if the array of column top locations exists:
+            if (colTops != null)
+            {
+                // Call Array class member function to copy the array contents:
+                colTops.CopyTo(columnTops, 0);
+            }
+            else
+            {
+                throw new NullReferenceException("AI Class playCurrentPiece method:  The column top locations array passed into the function was a NULL pointer.");
+            }
             // Check if the current piece exists:
             if (cPiece != null)
             {
@@ -132,29 +135,25 @@ namespace TetrisTribute
             {
                 throw new NullReferenceException("AI Class playCurrentPiece method:  The current piece object passed into the function was a NULL pointer.");
             }
-            // Check if the previous piece exists:
-            if (pPiece != null)
-            {
-                previewPiece.PieceArray = pPiece;
-            }
-            else
-            {
-                throw new NullReferenceException("AI Class playCurrentPiece method:  The previous piece object passed into the function was a NULL pointer.");
-            }
 
             // Loop until the AI player finds a successful way to reach the chosen location:
-            bool needNewLocation;
+            /*bool needNewLocation;
             do
-            {
+            {*/
                 // Call function to chose a place on the board to steer the piece to:
                 findLocation();
-                needNewLocation = false;
+                // Add input signals for the final rotates:
+                for (int rotateAdder = 0; rotateAdder < chosenLocation.RotateCount; rotateAdder++)
+                {
+                    inputsQueue.Enqueue(ROTATE_KEY_PRESS);
+                }
+                //needNewLocation = false;
 
                 // Check if the current game piece make the next move:
-                do
+                while (atDestination())
                 {
                     // Loop twice to get both rotations if the piece can't move where it needs to with the first rotation:
-                    for (int numRotations = 0; numRotations < 2; numRotations++)
+                    for (int numRotations = 0; numRotations < 4; numRotations++)
                     {
                         // Could it move?
                         if (moveOnce())
@@ -163,67 +162,75 @@ namespace TetrisTribute
                         }
                         else 
                         {   // NO.  Has it already rotated?
-                            if (numRotations == 0)
+                            if (numRotations != 3)
                             {
                                 // NO.  Then rotate it and let it try again.
-                                rotate();
+                                movePiece = rotatePiece(movePiece);
+                                inputsQueue.Enqueue(ROTATE_KEY_PRESS);
+                                chosenLocation.RotateCount--;
                             }
                             else
                             {
+                                /*
                                 // YES.  Reduce the board and let it try finding a new location.
                                 reduceBoard();
-                                needNewLocation = true;
+                                needNewLocation = true;*/
                             }
                         }
                     }
-
+                    /*
                     // Check if we need a new location before we continue:
                     if (needNewLocation)
                     {
                         // Leave this loop and go to the one that finds locations:
                         break;
-                    }
+                    }*/
 
-                } while (atDestination());
+                }
 
-            } while (needNewLocation);
+            //} while (needNewLocation);
 
             // Call function to generate the input signals to tell the GamePlay class how the AI wants to move it's piece:
             
         }
 
-        private void reduceBoard()
-        {
-            throw new NotImplementedException();
-        }
 
-        private bool rotate()
-        {
-            throw new NotImplementedException();
-        }
-
-        private bool atDestination()
+        /**
+         * Determines if the move piece has reached the 
+         * chosen location.  Compares the points on the
+         * board where each location is to see if they
+         * are the same.
+         * @param -- None.
+         * @return -- Boolean value, TRUE if the AI piece has 
+         * reached the chosen location and FALSE if the AI
+         * piece has not reached that location.
+         */
+        private bool atDestination()        
         {
             // Declare local variables:
             bool atDest = false;
+            int numPointsEqual = 0;
             Location moveLoc = new Location();
-            
+            moveLoc.adjustPointsForLocation(movePiece, movePiece.X, movePiece.Y);
                 
             // Check if the points inside of the move location
             // are the same points in the chosen location:
-            /*for (int pointCounter = 0; pointCounter < 4; pointCounter++)
+            for( int pointCounter = 0; pointCounter < 4 ; pointCounter++)
             {
-                // Is the current point the same in both
-                if (chosenPoint.X == movePiece.X && chosenPoint.Y == movePiece.Y)
+                // Check if the x and y coordinates of the current
+                // point are the same as the ones in the destination.
+                if (moveLoc.getPoints()[pointCounter] == chosenLocation.getPoints()[pointCounter])
                 {
-                    atDest = true;
-                }
-                else
-                {
-                    atDest = false;
-                }
-            }*/
+                    numPointsEqual++;
+                }                
+            }
 
+            // Check to see if all the points were equal:
+            if (numPointsEqual == 4)
+            {
+                atDest = true;
+            }
+            
             return atDest;
         }
 
@@ -277,10 +284,10 @@ namespace TetrisTribute
                 for (int columnCounter = 0; columnCounter < (GAME_BOARD_X_MAX - pieceWidth); columnCounter++)
                 {
                     // Call method to set the points in temp to the landing position above the current column:
-                    temp.setPoints(currentPiece, columnCounter);
+                    temp.adjustPointsForLocation(currentPiece, columnCounter, columnTops[columnCounter]);
 
                     // Call method to look for open space gaps under the location temp:
-                    if (checkForGaps(temp) == 0)
+                    if (!checkForGaps(temp))
                     {
                         temp.Rank += NO_GAPS_BONUS;
                     }
@@ -291,6 +298,9 @@ namespace TetrisTribute
                     // Call method to determine how many cells will be filled in the lines that temp crosses: 
                     // This is done to try and guess which locations have the best chances of assisting line completes.
                     //temp.Rank += numCellsFilled(temp);
+
+                    // Update the rotation that temp is in:
+                    temp.RotateCount = rotationCounter;
 
                     // Add the temporary location to the list of locations that will be considered for the current move:
                     locations.Add(temp);
@@ -343,8 +353,6 @@ namespace TetrisTribute
                     chosenLocation = currentLocation;
                 }
             }
-
-
         }
 
         /**
@@ -381,6 +389,7 @@ namespace TetrisTribute
         /**
          * Copy of the Game Piece classes rotate piece method.
          * This one adds the argument.
+         * Note: Jason Newbold wrote most of this.
          */ 
         private Piece rotatePiece(Piece cPiece)
         {
@@ -391,7 +400,7 @@ namespace TetrisTribute
                 int[][] rotated = new int[4][];
                 for (int i = 0; i < 4; i++)
                 {
-                    rotated[i] = new int[] { empty, empty, empty, empty };
+                    rotated[i] = new int[] { GamePiece.empty, GamePiece.empty, GamePiece.empty, GamePiece.empty };
                 }
                 rotated[0][1] = curPiece[1][0];
                 rotated[1][1] = curPiece[1][1];
@@ -408,7 +417,7 @@ namespace TetrisTribute
                 int[][] rotated = new int[3][];
                 for (int i = 0; i < 3; i++)
                 {
-                    rotated[i] = new int[] { empty, empty, empty };
+                    rotated[i] = new int[] { GamePiece.empty, GamePiece.empty, GamePiece.empty };
                 }
 
                 rotated[0][0] = curPiece[2][0];
@@ -492,9 +501,9 @@ namespace TetrisTribute
         /**
          * Checks if any gaps are left underneath the location on the game board.
          * @param -- Location temp, a location object to search for gaps beneath.
-         * @return -- Integer value, the number of gaps below the piece.
+         * @return -- Boolean value, TRUE if gaps were found and FALSE if gaps weren't found.
          */
-        private int checkForGaps(Location temp)
+        private bool checkForGaps(Location temp)
         {
             // Declare local variables:
             int numberOfGaps = 0;
@@ -524,19 +533,98 @@ namespace TetrisTribute
                 }
             }
 
-            return numberOfGaps;
+            // Check for no gaps:
+            if (numberOfGaps == 0)
+            {
+                return false;
+            }
+            return true;
         }
 
-        
-
         /**
-         * Returns the number of elements stored in the inputs queue.
+         * Tries to move the game piece and returns it's 
+         * success.  It checks to see if the move to location
+         * is empty (can move) or not (can't move).  It 
+         * calculates whether it should move the piece 
+         * left or right to reach the chosen destination. 
          * @param -- None.
-         * @return -- Integer value equal the number of items in the inputs queue.
+         * @return -- Boolean value, TRUE if the piece moved without 
+         * colliding, and FALSE if it couldn't move without colliding.
          */
         private bool moveOnce()
         {
-            throw new NotImplementedException();
+            // Declare local variables:
+            int xDisplacement = 0;
+
+            // Calculate the column difference between the destination location's
+            // left-most column and the left-most column of the move game piece.
+            xDisplacement = chosenLocation.MinX - movePiece.X;
+
+            // Check if the displacement is positive or negative:
+            if (xDisplacement > 0)
+            {
+                return moveRight();
+            }
+            else if (xDisplacement < 0)
+            {
+                return moveLeft();
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        /**
+         * Tries to move the game piece left and returns it's 
+         * success.  It checks to see if the move to location
+         * is empty (can move) or not (can't move).  
+         * @param -- None.
+         * @return -- Boolean value, TRUE if the piece moved without 
+         * colliding, and FALSE if it couldn't move without colliding.
+         */
+        private bool moveLeft()         // NEEDS A COLLISION DETECTOR!!!!!!!!
+        {
+            // Move the piece left.
+            movePiece.X--;
+
+            // Check if it ran into another game piece:
+            if (false /*didCollide(movePiece)*/)
+            {
+                movePiece.X++;
+                return false;
+            }
+            else
+            {
+                inputsQueue.Enqueue(LEFT_KEY_PRESS);
+                return true;
+            }
+        }
+
+        /**
+         * Tries to move the game piece right and returns it's 
+         * success.  It checks to see if the move to location
+         * is empty (can move) or not (can't move).  
+         * @param -- None.
+         * @return -- Boolean value, TRUE if the piece moved without 
+         * colliding, and FALSE if it couldn't move without colliding.
+         */
+        private bool moveRight()        // NEEDS A COLLISION DETECTOR!!!!!!!!
+        {
+            // Move the piece right.
+            movePiece.X++;
+
+            // Check if it ran into another game piece:
+            if (false /*didCollide(movePiece)*/)
+            {
+                movePiece.X--;
+                return false;
+            }
+            else
+            {
+                inputsQueue.Enqueue(RIGHT_KEY_PRESS);
+                return true;
+            }
         }
 
         // Define sub classes:
@@ -608,6 +696,7 @@ namespace TetrisTribute
             private int maxX;          // The largest X value in the set of points.
             private int minY;          // The smallest Y value in the set of points.
             private int minX;          // The smallest X value in the set of points.
+            private int rotateCount;            // Keeps track of the number of rotates to perform before dropping the piece.
 
             // Define class methods:
             /**
@@ -627,6 +716,17 @@ namespace TetrisTribute
                 MinY = GAME_BOARD_Y_MAX;
                 Rank = 0;
             }
+
+            /**
+             * Gets and Sets the value of rank.
+             *
+             */
+            public int RotateCount
+            {
+                get { return rotateCount; }
+                set { rotateCount = value; }
+            }
+            
             /**
              * Gets and Sets the value of rank.
              *
@@ -727,21 +827,23 @@ namespace TetrisTribute
              *        side reference for the resulting location's points.
              * @return -- Nothing.
              */
-            public void setPoints(Piece tempPiece, int column)  // NOT DONE!!!!!
+            public void adjustPointsForLocation(Piece tempPiece, int column, int row) 
             {
                 // Declare local variables:
-                int xAdjustment = 0;
-                int yAdjustment = 0;
-
-                // Calculate the adjustment difference for the x axis:
-                //xAdjustment = tempPiece.x - column;
-                //yAdjustment = tempPiece.y - map.getColumnHeight(column);
+                int index = 0;
 
                 // Loop to create point objects and add them to the location:
-                for (int pointsCounter = 0; pointsCounter < POINTS_ARRAY_SIZE; pointsCounter++)
+                for (int rowCount = 0; rowCount < tempPiece.getHeight(); rowCount++)
                 {
-                    // Call method to add the current point to the location.
-              //      setPoint(tempPiece.x - xAdjustment, tempPiece.y - yAdjustment, pointsCounter);
+                    for (int colCount = 0; colCount < tempPiece.getWidth(); colCount++)
+                    {
+                        // Test if the current location in temp piece is an game piece block:
+                        if (tempPiece.PieceArray[rowCount][colCount] != 0)
+                        {
+                            // Add the point to the location:
+                            setPoint(colCount + column, rowCount - row, index++);
+                        }
+                    }
                 }
 
             }
@@ -760,7 +862,7 @@ namespace TetrisTribute
             public Point[] getPoints()
             {
                 return points_;
-            }
+            } 
         }
 
         private class Piece
@@ -793,13 +895,13 @@ namespace TetrisTribute
             public int X
             {
                 get { return x; }
-               // set { x = value; }
+                set { x = value; }
             }
 
             public int Y
             {
                 get { return y; }
-               // set { y = value; }
+                set { y = value; }
             }
 
             public int[][] PieceArray
