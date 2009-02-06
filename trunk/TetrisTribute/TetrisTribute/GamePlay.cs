@@ -29,6 +29,7 @@ namespace TetrisTribute
 
 
         GraphicsDeviceManager graphics;
+        GraphicsManager gm;
         SpriteBatch spriteBatch;
         HighScores high;
         GamePiece piece;
@@ -54,6 +55,7 @@ namespace TetrisTribute
         public GamePlay()
         {
             graphics = new GraphicsDeviceManager(this);
+            gm = new GraphicsManager(this);
             Content.RootDirectory = "Content";
         }
 
@@ -100,7 +102,8 @@ namespace TetrisTribute
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-           
+            gm.LoadContent(this);
+
             high = new HighScores();
             piece = new GamePiece();
             
@@ -263,7 +266,13 @@ namespace TetrisTribute
 
         private void gameDraw(GameTime gameTime)
         {
+            // gm.drawBoard(int[][] gameBoard);
+            // call this, passing the gameboard to draw the board
 
+            // gm.drawPiece(int[][] aPiece, int x, int y);
+            // call this to draw a piece: aPiece at x and y
+
+            // i'll fix this up later, but its a start for testing.
         }
 
         private void creditsDraw(GameTime gameTime)

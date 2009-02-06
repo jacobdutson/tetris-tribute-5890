@@ -10,3 +10,7 @@ R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\
 R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
 R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.exe
 R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.pdb
+C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.exe
+C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.pdb
