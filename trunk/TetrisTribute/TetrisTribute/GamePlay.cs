@@ -73,6 +73,7 @@ namespace TetrisTribute
         //stores the menu item that is currently selected
         int selectedMenuItem;
 
+        double moveTime;
         public GamePlay()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -98,6 +99,7 @@ namespace TetrisTribute
             exitTime = 30000;
             creditsFinished = false;
             score = 0;
+            moveTime = 500;
 
             update = new updateDelegate(menuUpdate);
             draw = new drawDelegate(menuDraw);
@@ -182,6 +184,7 @@ namespace TetrisTribute
             dropSpeed = 500;
             
             score = 0;
+            moveTime = 500;
 
             
             for (int i = 0; i < ROWS; i++)
@@ -235,6 +238,7 @@ namespace TetrisTribute
                 if (selectedMenuItem == PLAY)
                 {
                     reset();
+                    userInput.setMenuControl(false);
                     update = new updateDelegate(gameUpdate);
                     draw = new drawDelegate(gameDraw);
                 }
@@ -269,6 +273,7 @@ namespace TetrisTribute
         private void gameUpdate(GameTime gameTime)
         {
             KeyboardState state = Keyboard.GetState();
+            bool slide = false;
 
             int right = 1;
             int down = 0;
@@ -287,7 +292,18 @@ namespace TetrisTribute
             //if (state.IsKeyDown(Keys.Right) && oldState.IsKeyDown(Keys.Right))
             if(userInput.Right && userInput.PreviousRight)
             {
+                slide = true;
                 //get time and move right accordingly
+                moveTime = moveTime - gameTime.ElapsedGameTime.Milliseconds;
+                if (moveTime < 0)
+                {
+                    //move one space to the right
+                    if (canMove(piece.getCurRow(), piece.getCurColumn(), right))
+                    {
+                        piece.setCurColumn(piece.getCurColumn() + right);
+                    }
+                    moveTime = 75;
+                }
             }
 
            // if (state.IsKeyDown(Keys.Left) && !oldState.IsKeyDown(Keys.Left))
@@ -303,7 +319,18 @@ namespace TetrisTribute
             //if (state.IsKeyDown(Keys.Left) && oldState.IsKeyDown(Keys.Left))
             if(userInput.Left && userInput.PreviousLeft)
             {
+                slide = true;
                 //get time and move Left accordingly
+                moveTime = moveTime - gameTime.ElapsedGameTime.Milliseconds;
+                if (moveTime < 0)
+                {
+                    //move one space to the right
+                    if (canMove(piece.getCurRow(), piece.getCurColumn(), left))
+                    {
+                        piece.setCurColumn(piece.getCurColumn() + left);
+                    }
+                    moveTime = 75;
+                }
             }
 
             //if (state.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
@@ -333,7 +360,10 @@ namespace TetrisTribute
                 int mult = 8;
                 dropTime = dropTime - (gameTime.ElapsedGameTime.Milliseconds * mult);
             }
-
+            if (!slide)
+            {
+                moveTime = 300;
+            }
             dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
 
             if (dropTime < 0)
@@ -364,6 +394,7 @@ namespace TetrisTribute
                         update = new updateDelegate(menuUpdate);
                         //draw = new drawDelegate(gameDraw);
                         //TODO GAME OVER
+                        userInput.setMenuControl(true);
                         printGame();
                         int a = 5;
                     }

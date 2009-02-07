@@ -54,7 +54,10 @@ namespace TetrisTribute
             {
                 defaultScores();
             }
-            
+            catch (System.Exception error)
+            {
+                defaultScores();
+            }
 
         }
 

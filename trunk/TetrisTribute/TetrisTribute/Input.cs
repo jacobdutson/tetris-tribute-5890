@@ -8,9 +8,6 @@ namespace TetrisTribute
 {
     class Input
     {
-        private KeyboardState oldKeyState;
-        private GamePadState oldPadState;
-     
         public bool up;
         public bool down;
         public bool right;
@@ -23,8 +20,11 @@ namespace TetrisTribute
         public bool oldLeft;
         public bool oldEnter;
 
+        public bool menuControl;
+
         public Input()
         {
+            menuControl = true;
             up = false;
             down = false;
             right = false;
@@ -88,7 +88,10 @@ namespace TetrisTribute
                 //Dpad
                 if (padState.DPad.Up == ButtonState.Pressed)
                 {
-                    up = true;
+                    if (menuControl)
+                    {
+                        up = true;
+                    }
                 }
                 if (padState.DPad.Right == ButtonState.Pressed)
                 {
@@ -104,13 +107,47 @@ namespace TetrisTribute
                 }
 
                 //left thumbstick
-              /*  if (padState.ThumbSticks.Left.X == )
+                if (padState.ThumbSticks.Left.X > 0 )
                 {
-                    up = true;
-                }*/
+                    right = true;
+                }
+                if (padState.ThumbSticks.Left.X < 0)
+                {
+                    left = true;
+                }
+                if (padState.ThumbSticks.Left.Y > 0)
+                {
+                    if (menuControl)
+                    {
+                        up = true;
+                    }
+                }
+                if (padState.ThumbSticks.Left.Y < 0)
+                {
+                    down = true;
+                }
+
+                //a button will act like enter during menu and rotate during game
+                if (padState.Buttons.A == ButtonState.Pressed)
+                {
+                    if (menuControl)
+                    {
+                        enter = true;
+                    }
+                    else
+                    {
+                        up = true;
+                    }
+                }
+
             }
             
 
+        }
+
+        public void setMenuControl(bool value)
+        {
+            menuControl = value;
         }
 
         public bool Up
