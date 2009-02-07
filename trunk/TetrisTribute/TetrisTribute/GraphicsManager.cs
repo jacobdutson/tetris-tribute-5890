@@ -23,7 +23,8 @@ namespace TetrisTribute
         ContentManager m_content;
         SpriteBatch spriteBatch;
         Texture2D blocks;
-
+        SpriteFont afont;
+        
         public GraphicsManager(GamePlay game)
         {
             graphics = game.graphics;
@@ -38,6 +39,7 @@ namespace TetrisTribute
 
             // TODO: use this.Content to load your game content here\
             blocks = m_content.Load<Texture2D>(@"Content\blocks2");
+            afont = m_content.Load<SpriteFont>(@"Content\Courier New");
         }
 
         public void drawPiece(int[][] aPiece, int x, int y)
@@ -58,6 +60,13 @@ namespace TetrisTribute
             spriteBatch.Draw(blocks, new Rectangle((400 + TILESIZE * 5), 0, (400 - TILESIZE * 5), 600), new Rectangle(0, 0, TILESIZE, TILESIZE), Color.White);
             spriteBatch.End();
             drawPiece(gameboard, (400 - TILESIZE * 5), 0);
+        }
+
+        public void drawString(string aString, int x, int y, Color fontColor)
+        {
+            spriteBatch.Begin();
+            spriteBatch.DrawString(afont, aString, new Vector2(x, y), fontColor);
+            spriteBatch.End();
         }
     }
 }
