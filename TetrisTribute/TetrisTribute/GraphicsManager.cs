@@ -26,7 +26,8 @@ namespace TetrisTribute
 
         public GraphicsManager(GamePlay game)
         {
-            graphics = new GraphicsDeviceManager(game);
+            graphics = game.graphics;
+           // graphics = new GraphicsDeviceManager(game);
             m_content = new ContentManager(game.Services);
         }
 
@@ -52,7 +53,7 @@ namespace TetrisTribute
 
         public void drawBoard(int[][] gameboard)
         {
-            drawPiece(gameboard, 240, 0);
+            drawPiece(gameboard, 240, -32);
         }
     }
 }
