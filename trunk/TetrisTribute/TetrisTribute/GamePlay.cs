@@ -11,6 +11,7 @@ using Microsoft.Xna.Framework.Media;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
 
+
 namespace TetrisTribute
 {
     /// <summary>
@@ -19,22 +20,33 @@ namespace TetrisTribute
     public class GamePlay : Microsoft.Xna.Framework.Game
     {
         //number of rows and columns on game board
-        public const int ROWS = 20; //about 18-22
+        public const int ROWS = 20;
         public const int COLUMNS = 10;
        
+        //menu items selections
         public const int PLAY = 0;
         public const int HIGH = 1;
         public const int CREDITS = 2;
         public const int EXIT = 3;
 
+        int[][] displayBoard;
 
-        GraphicsDeviceManager graphics;
+        //const to determine if gameboard is empty
+        const int EMPTY = 0;
+
+        //variables assiociated with the graphics
+        public GraphicsDeviceManager graphics;
         GraphicsManager gm;
         SpriteBatch spriteBatch;
+
+        //class that stores and loads high scores
         HighScores high;
+
+        //class that manages the creation, rotation of game pieces
         GamePiece piece;
-        String[][] highScores;
-        private KeyboardState oldState;
+
+        //Input class to get user input from keyboard, gamepad, AI
+        Input userInput;
 
         //delegate that is used to call the correct update function based on state
         delegate void updateDelegate(GameTime gameTime);
@@ -44,12 +56,21 @@ namespace TetrisTribute
         updateDelegate update;
         drawDelegate draw;
 
+        //double array that represents the current tetris board
         int[][] gameBoard;
+        //stores the current user score
         int score;
+        //milliseconds remaining till the peice drops
         double dropTime;
+        //milliseconds between peice drops
         double dropSpeed;
+        //stores if credits are finished being drawn
         bool creditsFinished;
-
+        //when it reaches 0, the attract mode will start
+        double idleTime;
+        //time remaining till it exits from the credits
+        double exitTime;
+        //stores the menu item that is currently selected
         int selectedMenuItem;
 
         public GamePlay()
@@ -69,17 +90,19 @@ namespace TetrisTribute
         {
             selectedMenuItem = PLAY;
             // TODO: Add your initialization logic here
-            score = 0;
-
+           
             //TODO set drop speed
-            dropTime = 5000;
-            dropSpeed = 5000;
+            dropTime = 500;
+            dropSpeed = 500;
+            idleTime = 30000;
+            exitTime = 30000;
             creditsFinished = false;
+            score = 0;
 
             update = new updateDelegate(menuUpdate);
             draw = new drawDelegate(menuDraw);
 
-
+            userInput = new Input();
             //initialize the game board
             gameBoard =new int[ROWS][];
             for (int i = 0; i < ROWS; i++)
@@ -105,10 +128,7 @@ namespace TetrisTribute
             gm.LoadContent(this);
 
             high = new HighScores();
-            piece = new GamePiece();
-            
-            
-            
+            piece = new GamePiece();        
             
             // TODO: use this.Content to load your game content here
         }
@@ -133,7 +153,9 @@ namespace TetrisTribute
             // Allows the game to exit
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
-            
+
+            userInput.updateInput();
+
             update(gameTime);           
 
             base.Update(gameTime);
@@ -154,61 +176,65 @@ namespace TetrisTribute
             base.Draw(gameTime);
         }
 
-        private void gameUpdate(GameTime gameTime)
+        public void reset()
         {
-            KeyboardState state = Keyboard.GetState();
+            dropTime = 500;
+            dropSpeed = 500;
+            
+            score = 0;
 
-            if (state.IsKeyDown(Keys.Right) && !oldState.IsKeyDown(Keys.Right))
+            
+            for (int i = 0; i < ROWS; i++)
             {
-                //move one space to the right
+                for (int j = 0; j < COLUMNS; j++)
+                {
+                    gameBoard[i][j] = 0;
+                }
             }
-
-            if (state.IsKeyDown(Keys.Right) && oldState.IsKeyDown(Keys.Right))
-            {
-                //get time and move right accordingly
-            }
-
-            dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
-            if (dropTime < 0)
-            {
-                //TODO drop piece
-                dropTime = dropSpeed;
-            }
-
-            oldState = state;
         }
 
+
+        /// <summary>
+        /// Allows the game to run logic needed for the menu
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void menuUpdate(GameTime gameTime)
         {
-            KeyboardState state = Keyboard.GetState();
-
-            //TODO make sure key was released and add XBOX CONTROLS
-            if (state.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
-            {
+             
+            //if ((state.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
+            //    || (gamePadState.DPad.Down == ButtonState.Pressed && gamePadState.DPad.Down == ButtonState.Released))
+            if(userInput.Up  && !userInput.PreviousUp)
+            { 
                 //change the selected menu item up one position
                 //??DO we want to wrap the selection if so have an else = 3
                 if (selectedMenuItem > 0)
                 {
+                    idleTime = 30000;
                     selectedMenuItem--;
                     Console.WriteLine("Selection Changed to " + selectedMenuItem);
                 }
             }
-            if (state.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down))
+            //if (state.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down))
+            if(userInput.down && !userInput.PreviousDown)
             {
                 //change selected item down one
                 //??DO we want to wrap the selection if so have an else = 0
                 if (selectedMenuItem < 3)
                 {
+                    idleTime = 30000;
                     selectedMenuItem++;
                     Console.WriteLine("Selection Changed to " + selectedMenuItem);
                 }
             }
-            if (state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
+            //if (state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
+            if(userInput.Enter && !userInput.PreviousEnter)
             {
+                idleTime = 30000;
                 //get selected item
                 //change update and draw delegates
                 if (selectedMenuItem == PLAY)
                 {
+                    reset();
                     update = new updateDelegate(gameUpdate);
                     draw = new drawDelegate(gameDraw);
                 }
@@ -228,61 +254,270 @@ namespace TetrisTribute
                     this.Exit();
                 }
             }
-
-            oldState = state;
+            idleTime = idleTime - gameTime.ElapsedGameTime.Milliseconds;
+            if (idleTime < 0)
+            {
+                idleTime = 30000;
+                //TODO CODE TO START AI
+            }
         }
 
+        /// <summary>
+        /// Allows the game to run logic needed for the game being played
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        private void gameUpdate(GameTime gameTime)
+        {
+            KeyboardState state = Keyboard.GetState();
+
+            int right = 1;
+            int down = 0;
+            int left = -1;
+
+            //if (state.IsKeyDown(Keys.Right) && !oldState.IsKeyDown(Keys.Right))
+            if(userInput.Right && !userInput.PreviousRight)
+            {
+                //move one space to the right
+                if (canMove(piece.getCurRow(), piece.getCurColumn(), right))
+                {
+                    piece.setCurColumn(piece.getCurColumn() + right);
+                }
+            }
+
+            //if (state.IsKeyDown(Keys.Right) && oldState.IsKeyDown(Keys.Right))
+            if(userInput.Right && userInput.PreviousRight)
+            {
+                //get time and move right accordingly
+            }
+
+           // if (state.IsKeyDown(Keys.Left) && !oldState.IsKeyDown(Keys.Left))
+            if( userInput.Left && !userInput.PreviousLeft)
+            {
+                //move one space to the Left
+                if (canMove(piece.getCurRow(), piece.getCurColumn(), left))
+                {
+                    piece.setCurColumn(piece.getCurColumn() + left);
+                }
+            }
+
+            //if (state.IsKeyDown(Keys.Left) && oldState.IsKeyDown(Keys.Left))
+            if(userInput.Left && userInput.PreviousLeft)
+            {
+                //get time and move Left accordingly
+            }
+
+            //if (state.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
+            if(userInput.Up && !userInput.PreviousUp)
+            {
+                //move one space to the Left
+                piece.rotatePiece();
+                if (!canMove(piece.getCurRow() + 1, piece.getCurColumn(), down))
+                {
+                    piece.rotatePiece();
+                    piece.rotatePiece();
+                    piece.rotatePiece();
+                    //UNDUE rotate
+                }
+            }
+
+            //if (state.IsKeyDown(Keys.Up) && oldState.IsKeyDown(Keys.Up))
+            if(userInput.Up && userInput.PreviousUp)
+            {
+                //get time and move Left accordingly
+            }
+
+            //if (state.IsKeyDown(Keys.Down))
+            if(userInput.Down)
+            {
+                //get time and move Left accordingly
+                int mult = 8;
+                dropTime = dropTime - (gameTime.ElapsedGameTime.Milliseconds * mult);
+            }
+
+            dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
+
+            if (dropTime < 0)
+            {
+                if (canMove(piece.getCurRow(), piece.getCurColumn(), down))
+                {
+                    piece.setCurRow(piece.getCurRow() + 1);
+                }
+                else
+                {
+                    for (int i = 0; i < piece.getCurPiece().Length; i++)
+                    {
+                        for (int j = 0; j < piece.getCurPiece().Length; j++)
+                        {
+                            if (piece.getCurPiece()[i][j] != EMPTY && (piece.getCurRow() + i) < ROWS
+                                && (piece.getCurColumn() + j) < COLUMNS)
+                            {
+                                gameBoard[piece.getCurRow() + i][piece.getCurColumn() + j] = piece.getCurPiece()[i][j];
+                            }
+                        }
+                    }
+                    printGame();
+                    clearRows();
+                    
+                    piece.updatePiece();
+                    if (!canMove(piece.getCurRow(), piece.getCurColumn(), down))
+                    {
+                        update = new updateDelegate(menuUpdate);
+                        //draw = new drawDelegate(gameDraw);
+                        //TODO GAME OVER
+                        printGame();
+                        int a = 5;
+                    }
+                }
+                dropTime = dropSpeed;
+            }
+
+        }
+
+        /// <summary>
+        /// Allows the game to run logic needed for the credits
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void creditsUpdate(GameTime gameTime)
         {
             KeyboardState state = Keyboard.GetState();
             
-            //if user presses enter or esc return back to the menu
-            if ((state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
-                || (state.IsKeyDown(Keys.Escape) && !oldState.IsKeyDown(Keys.Escape))
-                || creditsFinished)
+            //TODO Escape key or any key???
+            if((userInput.Enter && !userInput.PreviousEnter) || creditsFinished)
             {
                 update = new updateDelegate(menuUpdate);
                 draw = new drawDelegate(menuDraw);
             }
             exitTime = exitTime - gameTime.ElapsedGameTime.Milliseconds;
 
-            oldState = state;
         }
 
+        /// <summary>
+        /// Allows the game to run logic needed for the highScores
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void scoresUpdate(GameTime gameTime)
         {
-            KeyboardState state = Keyboard.GetState();
             //if got high score
             //input to get name etc
             //enter to finish
             //else entertoexit
-            oldState = state;
         }
 
+        /// <summary>
+        /// This is called when the menu should draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void menuDraw(GameTime gameTime)
         {
 
         }
 
+        /// <summary>
+        /// This is called when the game being played should draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void gameDraw(GameTime gameTime)
         {
-            // gm.drawBoard(int[][] gameBoard);
+
+            gm.drawBoard(gameBoard);
             // call this, passing the gameboard to draw the board
 
-            // gm.drawPiece(int[][] aPiece, int x, int y);
+             gm.drawPiece(piece.getCurPiece(), 240 + (32 * piece.getCurColumn()), -32 + (32 * piece.getCurRow()));
             // call this to draw a piece: aPiece at x and y
 
             // i'll fix this up later, but its a start for testing.
         }
 
+        /// <summary>
+        /// This is called when the credits should draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void creditsDraw(GameTime gameTime)
         {
             //TODO set creditsFinished = true when credits are finished
         }
 
+        /// <summary>
+        /// This is called when the HighScores should be draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void scoreDraw(GameTime gameTime)
         {
             
+        }
+
+        //for debugging only
+        private void printGame()
+        {
+            Console.WriteLine("********************");
+            for (int i = 0; i < ROWS; i++)
+            {
+                for (int j = 0; j < COLUMNS; j++)
+                {
+                    Console.Write(gameBoard[i][j]);
+                }
+                Console.WriteLine("");
+            }
+            Console.WriteLine("********************");
+        }
+
+        private void clearRows()
+        {
+            for (int i = 0; i < ROWS; i++)
+            {
+                bool clear = true;
+                for (int j = 0; j < COLUMNS && clear; j++)
+                {
+                    if (gameBoard[i][j] == EMPTY)
+                    {
+                        clear = false;
+                    }
+                }
+                if (clear)
+                {
+                    for (int k = i; k > 0 && clear; k--)
+                    {
+                        for (int j = 0; j < COLUMNS && clear; j++)
+                        {
+                            gameBoard[k][j] = gameBoard[k - 1][j];
+                        }
+                    }
+                    for (int j = 0; j < COLUMNS && clear; j++)
+                    {
+                        gameBoard[0][j] = EMPTY;
+                    }
+                    //i++;
+                }
+            }
+        }
+
+        private bool canMove(int curRow, int curColumn, int direction)
+        {
+            //direction  -1 left,  0 down,  1 right
+
+            int down = (direction + 1) % 2;
+
+            for (int i = 0; i < piece.getCurPiece().Length; i++)
+            {
+                for (int j = 0; j < piece.getCurPiece().Length; j++)
+                {
+                    //check if at a wall  ??? what about emtpy bottom row on curpiece
+                    if ((curRow + i + down) >= ROWS || (curColumn + j + direction) >= COLUMNS || (curColumn + j + direction) < 0)
+                    {
+                        if (piece.getCurPiece()[i][j] != EMPTY)
+                        {
+                            return false;
+                        }
+
+                    }
+                    else if (gameBoard[curRow + i + down][curColumn + j + direction] != EMPTY && piece.getCurPiece()[i][j] != EMPTY)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
     }

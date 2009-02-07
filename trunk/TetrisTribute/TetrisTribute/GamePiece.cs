@@ -9,13 +9,13 @@ namespace TetrisTribute
     {
         //integers representing a color
         //TODO NEED TO CHANGE VALUES
-        public const int green = 5;
-        public const int red = 5;
-        public const int purple = 5;
-        public const int blue = 6;
-        public const int yellow = 7;
-        public const int cyan = 7;
-        public const int orange = 6;
+        public const int green = 3;
+        public const int red = 2;
+        public const int purple = 7;
+        public const int blue = 1;
+        public const int yellow = 4;
+        public const int cyan = 6; //gray
+        public const int orange = 5;
         public const int empty = 0;
 
         Random random;
@@ -31,6 +31,9 @@ namespace TetrisTribute
 
         int[][] curPiece;
         int[][] nextPiece;
+
+        int curRow;
+        int curColumn;
 
         public GamePiece()
         {
@@ -64,8 +67,10 @@ namespace TetrisTribute
                                       new int[] { purple, purple, purple},
                                       new int[] { empty,  empty,  purple} };
 
-            curPiece = straight;// getRandomPiece();
+            curPiece = getRandomPiece();
             nextPiece = getRandomPiece();
+            curRow = 0;
+            curColumn = 3;
 
          //   rotatePiece();
          //   rotatePiece();
@@ -90,7 +95,8 @@ namespace TetrisTribute
         {
             curPiece = nextPiece;
             nextPiece = getRandomPiece();
-            //return block;
+            curColumn = 3;
+            curRow = 0;
         }
 
         public int[][] rotatePiece()
@@ -173,6 +179,26 @@ namespace TetrisTribute
             }
 
             return piece;
+        }
+
+        public int getCurRow()
+        {
+            return curRow;
+        }
+
+        public int getCurColumn()
+        {
+            return curColumn;
+        }
+
+        public void setCurRow(int row)
+        {
+            curRow = row;
+        }
+
+        public void setCurColumn(int column)
+        {
+            curColumn = column;
         }
 
     }
