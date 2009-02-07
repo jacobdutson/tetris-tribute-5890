@@ -422,7 +422,7 @@ namespace TetrisTribute
             gm.drawBoard(gameBoard);
             // call this, passing the gameboard to draw the board
 
-             gm.drawPiece(piece.getCurPiece(), 240 + (32 * piece.getCurColumn()), -32 + (32 * piece.getCurRow()));
+             gm.drawPiece(piece.getCurPiece(), 250 + (30 * piece.getCurColumn()), -30 + (30 * piece.getCurRow()));
             // call this to draw a piece: aPiece at x and y
 
             // i'll fix this up later, but its a start for testing.

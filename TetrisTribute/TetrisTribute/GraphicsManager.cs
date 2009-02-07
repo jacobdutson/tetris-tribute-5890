@@ -17,7 +17,7 @@ namespace TetrisTribute
 {
     class GraphicsManager
     {
-        const int TILESIZE = 32;
+        const int TILESIZE = 30;
 
         GraphicsDeviceManager graphics;
         ContentManager m_content;
@@ -54,10 +54,10 @@ namespace TetrisTribute
         public void drawBoard(int[][] gameboard)
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(blocks, new Rectangle(0,0,240,600), new Rectangle(0, 0, TILESIZE, TILESIZE), Color.White);
-            spriteBatch.Draw(blocks, new Rectangle(560,0,240,600), new Rectangle(0, 0, TILESIZE, TILESIZE), Color.White);
+            spriteBatch.Draw(blocks, new Rectangle(0, 0, (400 - TILESIZE * 5), 600), new Rectangle(0, 0, TILESIZE, TILESIZE), Color.White);
+            spriteBatch.Draw(blocks, new Rectangle((400 + TILESIZE * 5), 0, (400 - TILESIZE * 5), 600), new Rectangle(0, 0, TILESIZE, TILESIZE), Color.White);
             spriteBatch.End();
-            drawPiece(gameboard, 240, -32);
+            drawPiece(gameboard, (400 - TILESIZE * 5), 0);
         }
     }
 }
