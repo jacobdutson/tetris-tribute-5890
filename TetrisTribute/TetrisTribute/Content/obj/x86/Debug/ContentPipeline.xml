@@ -19,6 +19,15 @@
       <Output>C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\blocks2.xnb</Output>
       <Time>2009-02-07T11:14:52.843-07:00</Time>
     </Item>
+    <Item>
+      <Source>Courier New.spritefont</Source>
+      <Name>Courier New</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\Courier New.xnb</Output>
+      <Time>2008-10-28T08:21:44-07:00</Time>
+    </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>
       <TargetPlatform>Windows</TargetPlatform>
