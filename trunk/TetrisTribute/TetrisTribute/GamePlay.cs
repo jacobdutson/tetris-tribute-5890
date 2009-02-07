@@ -104,7 +104,7 @@ namespace TetrisTribute
 
             userInput = new Input();
             //initialize the game board
-            gameBoard =new int[ROWS][];
+            gameBoard = new int[ROWS][];
             for (int i = 0; i < ROWS; i++)
             {
                 gameBoard[i] = new int[COLUMNS];
