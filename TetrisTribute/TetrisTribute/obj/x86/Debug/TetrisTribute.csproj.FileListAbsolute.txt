@@ -16,3 +16,7 @@ C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute
 C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.pdb
 C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\blocks.xnb
 C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\blocks2.xnb
+C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\blocks.xnb
+C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\blocks2.xnb
+C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\TetrisTribute.exe
+C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\TetrisTribute.pdb

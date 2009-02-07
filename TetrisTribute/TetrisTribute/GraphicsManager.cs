@@ -53,6 +53,10 @@ namespace TetrisTribute
 
         public void drawBoard(int[][] gameboard)
         {
+            spriteBatch.Begin();
+            spriteBatch.Draw(blocks, new Rectangle(0,0,240,600), new Rectangle(0, 0, TILESIZE, TILESIZE), Color.White);
+            spriteBatch.Draw(blocks, new Rectangle(560,0,240,600), new Rectangle(0, 0, TILESIZE, TILESIZE), Color.White);
+            spriteBatch.End();
             drawPiece(gameboard, 240, -32);
         }
     }
