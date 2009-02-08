@@ -535,7 +535,7 @@ namespace TetrisTribute
             gm.drawString("Jacob Dutson", 250, (creditTime/8) - 1300, Color.Blue);
             gm.drawString("Artificial Intelligence", 185, (creditTime/8) -1340, Color.Blue);
 
-            gm.drawString("Dallin", 250, (creditTime / 8) - 900, Color.Blue);
+            gm.drawString("Dallin Osmun", 250, (creditTime / 8) - 900, Color.Blue);
             gm.drawString("Graphic Designer", 200, (creditTime / 8) - 940, Color.Blue);
 
             gm.drawString("Special Thanks to", 225, (creditTime / 8) -40, Color.Blue);
