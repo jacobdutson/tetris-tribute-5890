@@ -55,9 +55,9 @@ namespace TetrisTribute
             currentPiece = new Piece();
             movePiece = new Piece();
             moveLocation = new Location();
-            currentBoard = new int [GAME_BOARD_X_MAX , GAME_BOARD_Y_MAX];
+            currentBoard = new int [GAME_BOARD_Y_MAX , GAME_BOARD_X_MAX];
             columnTops = new int[GAME_BOARD_X_MAX];
-            locations = new List<Location>();
+            locations = new List<Location>(50);
             chosenLocation = new Location();
             kill = false;
             pause = false;
@@ -97,8 +97,13 @@ namespace TetrisTribute
          * next game piece that the AI will need to play
          * @return -- Nothing.
          */
-        public void playCurrentPiece(int[][] board, int[] colTops, int[][] cPiece, int cPieceX, int cPieceY)
+        public void playCurrentPiece(int[][] board, int[] colTops, int[][] cPiece)
         {
+            // Declare local variables:
+            int cPieceX = 3;
+            int cPieceY = 0; 
+
+
             // Copy needed data from arguments to local stores:
             // Check if the board exists:
             if (board != null)
@@ -129,7 +134,11 @@ namespace TetrisTribute
             if (cPiece != null)
             {
                 currentPiece.PieceArray = cPiece;
+                currentPiece.X = cPieceX;
+                currentPiece.Y = cPieceY;
                 movePiece.PieceArray = currentPiece.PieceArray;
+                movePiece.X = currentPiece.X;
+                movePiece.Y = currentPiece.Y;
             }
             else
             {
@@ -205,7 +214,7 @@ namespace TetrisTribute
          * reached the chosen location and FALSE if the AI
          * piece has not reached that location.
          */
-        private bool atDestination()        
+        private bool atDestination()            /// THERE IS A PROBLEM HERE!!!!!
         {
             // Declare local variables:
             bool atDest = false;
@@ -304,14 +313,14 @@ namespace TetrisTribute
 
                     // Add the temporary location to the list of locations that will be considered for the current move:
                     locations.Add(temp);
+
+                    // Reset temp by referencing it to a new heap location (new Location object):
+                    temp = new Location();
                 }
 
                 // Call method to perform one rotation on the current piece, so that the AI can check if that rotation 
                 // finds a better location than previous locations:
                 currentPiece = rotatePiece(currentPiece);
-
-                // Reset temp by referencing it to a new heap location (new Location object):
-                temp = new Location();
             }
             
             // Call method to find the lowest location on the game board out of the ones in the locations list:
@@ -507,29 +516,47 @@ namespace TetrisTribute
         {
             // Declare local variables:
             int numberOfGaps = 0;
+            bool dontCheck = false;
 
             // Loop through the location and check the gaps below each point:
             foreach (Point currentPoint in temp.getPoints())
             {
+                // Check if we need to skip this point.
+                foreach (Point otherPoint in temp.getPoints())
+                {
+                    if (currentPoint.X == otherPoint.X && otherPoint.Y > currentPoint.Y)
+                    {
+                        dontCheck = true;
+                    }
+                }
+                 
                 // Check if the current point is one of the lowest points in the location:
-                if( temp.MaxY == currentPoint.Y)
+                if (!dontCheck)
                 {
                     // Search the cells in the game board below the current point:
                     for (int row = currentPoint.Y + 1; row < GAME_BOARD_Y_MAX; row++)
                     {
+                        if (currentPoint.X >= GAME_BOARD_X_MAX)
+                        {
+                            throw new Exception("AI Class checkForGaps function found a point with an x value of " + currentPoint.X);
+                        }
+
                         // Check to see if the space is currently filled:
                         if (currentBoard[row, currentPoint.X] == 0)
                         {
                             numberOfGaps++;
                         }
                         // Check to see if the space is empty (a gap):
-                        else 
+                        else
                         {
                             break;
                         }
 
                     }
-
+                }
+                else
+                {
+                    dontCheck = false;
                 }
             }
 
@@ -780,7 +807,7 @@ namespace TetrisTribute
              */
             public void setPoint(int x, int y, int index)
             {
-                if (index >= POINTS_ARRAY_SIZE || index < 0)
+                if (index < POINTS_ARRAY_SIZE && index >= 0)
                 {
                     points_[index].X = x;
                     points_[index].Y = y;
@@ -833,18 +860,49 @@ namespace TetrisTribute
                 int index = 0;
 
                 // Loop to create point objects and add them to the location:
-                for (int rowCount = 0; rowCount < tempPiece.getHeight(); rowCount++)
+                for (int rowCount = 0; rowCount < tempPiece.PieceArray.Length; rowCount++)
                 {
-                    for (int colCount = 0; colCount < tempPiece.getWidth(); colCount++)
+                    for (int colCount = 0; colCount < tempPiece.PieceArray.Length; colCount++)
                     {
                         // Test if the current location in temp piece is an game piece block:
                         if (tempPiece.PieceArray[rowCount][colCount] != 0)
                         {
-                            // Add the point to the location:
-                            setPoint(colCount + column, rowCount - row, index++);
+                            if (tempPiece.getHeight() == 1)
+                            {
+                                // Add the point to the location:
+                                setPoint(colCount + column, row - tempPiece.PieceArray.Length + rowCount - 2, index);
+                            }
+                            else
+                            {
+                                // Add the point to the location:
+                                setPoint(colCount + column, row - tempPiece.PieceArray.Length + rowCount + 1, index);
+                            }
+
+                            
+
+                            index++;
                         }
                     }
                 }
+
+                // If the location is not already sitting on the top of the stack
+                // and can move down without problems, then move it down.
+                int tempMaxY = this.MaxY;
+                if (tempMaxY < row)
+                {
+                    for (int adjustCount = 0; adjustCount < POINTS_ARRAY_SIZE; adjustCount++)
+                    {
+                        setPoint(this.points_[adjustCount].X, this.points_[adjustCount].Y + (row - tempMaxY), adjustCount);
+                    }
+                }
+                /*if (didCollide(this))
+                {
+                    for (int adjustCount = 0; adjustCount < POINTS_ARRAY_SIZE; adjustCount++)
+                    {
+                        setPoint(this.points_[index].X, this.points_[index].Y - (row - this.maxY), index);
+                    }
+                } */
+
 
             }
             /**
@@ -876,18 +934,18 @@ namespace TetrisTribute
             public Piece()
             {
                 
-                pieceArray = new int[4][] {new int [4],
+               /* pieceArray = new int[4][] {new int [4],
                                              new int [4],
                                              new int [4],
-                                             new int [4]};
+                                             new int [4]};*/
             }
 
             public Piece(int[][] inPiece)
             {
-                pieceArray = new int[4][] {new int [4],
+                /*pieceArray = new int[4][] {new int [4],
                                              new int [4],
                                              new int [4],
-                                             new int [4]};
+                                             new int [4]};*/
 
                 PieceArray = inPiece;
             }
@@ -909,14 +967,15 @@ namespace TetrisTribute
                 get { return pieceArray; }
                 set 
                 {
+                    pieceArray = value;
                     // Copy the 1st dimension of the array argument.
-                    value.CopyTo(pieceArray, 0);
+                    //value.CopyTo(pieceArray, 0);
 
                     // Loop to copy 2nd dimension arrays from the arry argument.
-                    for (int arrayCount = 0; arrayCount < value.GetLength(0); arrayCount++)
-                    {
-                        value[arrayCount].CopyTo(pieceArray[arrayCount], 0);
-                    }
+                    //for (int arrayCount = 0; arrayCount < value.GetLength(0); arrayCount++)
+                    //{
+                     //   value[arrayCount].CopyTo(pieceArray[arrayCount], 0);
+                    //}
 
                 }
             }
@@ -931,32 +990,32 @@ namespace TetrisTribute
             {
                 // Declare local variables:
                 int[] heights = new int[4];
-                int maxHeight = 0;
+                int height = 0;
+                //int maxWidth = 0;
 
                 // Loop through piece and check how many non-zero values are in the array:
-                for (int row = 0; row < pieceArray.GetLength(0); row++)
+                for (int row = 0; row < pieceArray.Length; row++)
                 {
-                    for (int col = 0; col < pieceArray.GetLength(1); col++)
+                    for (int col = 0; col < pieceArray.Length; col++)
                     {
                         // Check if the current cell is an actual game block:
                         if (pieceArray[row][col] != 0)
                         {
-                            heights[col] += heights[col];
+                            heights[row]++;
                         }
                     }
                 }
 
-                // Determine which height was the greatest:
+                // Determine height:
                 for (int heightCounter = 0; heightCounter < heights.Length; heightCounter++)
                 {
-                    // Check if the current height is greater than previous heights:
-                    if (maxHeight <= heights[heightCounter])
+                    if (heights[heightCounter] > 0)
                     {
-                        maxHeight = heights[heightCounter];
+                        height++;
                     }
                 }
 
-                return maxHeight;
+                return height;
             }
 
             /**
@@ -969,32 +1028,32 @@ namespace TetrisTribute
             {
                 // Declare local variables:
                 int[] widths = new int[4];
-                int maxWidth = 0;
+                int width = 0;
+                //int maxWidth = 0;
 
                 // Loop through piece and check how many non-zero values are in the array:
-                for (int row = 0; row < pieceArray.GetLength(0); row++)
+                for (int row = 0; row < pieceArray.Length; row++)
                 {
-                    for (int col = 0; col < pieceArray.GetLength(1); col++)
+                    for (int col = 0; col < pieceArray.Length; col++)
                     {
                         // Check if the current cell is an actual game block:
                         if (pieceArray[row][col] != 0)
                         {
-                            widths[row] += widths[row];
+                            widths[col]++;
                         }
                     }
                 }
 
-                // Determine which Width was the greatest:
+                // Determine width:
                 for (int widthCounter = 0; widthCounter < widths.Length; widthCounter++)
                 {
-                    // Check if the current Width is greater than previous Widths:
-                    if (maxWidth <= widths[widthCounter])
+                    if (widths[widthCounter] > 0)
                     {
-                        maxWidth = widths[widthCounter];
+                        width++;
                     }
                 }
 
-                return maxWidth;
+                return width;
             }
             
         }
