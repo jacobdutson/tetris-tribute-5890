@@ -69,7 +69,7 @@ namespace TetrisTribute
         //when it reaches 0, the attract mode will start
         double idleTime;
         //time remaining till it exits from the credits
-        double exitTime;
+        int creditTime;
         //stores the menu item that is currently selected
         int selectedMenuItem;
 
@@ -96,7 +96,7 @@ namespace TetrisTribute
             dropTime = 500;
             dropSpeed = 500;
             idleTime = 30000;
-            exitTime = 30000;
+            creditTime = 18000;
             creditsFinished = false;
             score = 0;
             moveTime = 500;
@@ -415,10 +415,16 @@ namespace TetrisTribute
             //TODO Escape key or any key???
             if((userInput.Enter && !userInput.PreviousEnter) || creditsFinished)
             {
+                creditTime = 18000;
+                creditsFinished = false;
                 update = new updateDelegate(menuUpdate);
                 draw = new drawDelegate(menuDraw);
             }
-            exitTime = exitTime - gameTime.ElapsedGameTime.Milliseconds;
+            creditTime = creditTime - gameTime.ElapsedGameTime.Milliseconds;
+            if (creditTime < 0)
+            {
+                creditsFinished = true;
+            }
 
         }
 
@@ -428,10 +434,19 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void scoresUpdate(GameTime gameTime)
         {
-            //if got high score
-            //input to get name etc
-            //enter to finish
-            //else entertoexit
+            bool h = false;
+            if (h)
+            {
+                //get high score input
+            }
+            else
+            {
+                if (userInput.Enter && !userInput.PreviousEnter)
+                {
+                    update = new updateDelegate(menuUpdate);
+                    draw = new drawDelegate(menuDraw);
+                }
+            }
         }
 
         /// <summary>
@@ -440,7 +455,41 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void menuDraw(GameTime gameTime)
         {
+            if (selectedMenuItem == PLAY)
+            {
+                gm.drawString("Play Tetris", 250, 20, Color.Aquamarine);
+            }
+            else
+            {
+                gm.drawString("Play Tetris", 250, 20, Color.Blue);
+            }
 
+            if (selectedMenuItem == HIGH)
+            {
+                gm.drawString("High Scores", 250, 60, Color.Aquamarine);
+            }
+            else
+            {
+                gm.drawString("High Scores", 250, 60, Color.Blue);
+            }
+
+            if (selectedMenuItem == CREDITS)
+            {
+                gm.drawString("Credits", 250, 100, Color.Aquamarine);
+            }
+            else
+            {
+                gm.drawString("Credits", 250, 100, Color.Blue);
+            }
+
+            if (selectedMenuItem == EXIT)
+            {
+                gm.drawString("Exit", 250, 140, Color.Aquamarine);
+            }
+            else
+            {
+                gm.drawString("Exit", 250, 140, Color.Blue);
+            }
         }
 
         /// <summary>
@@ -467,7 +516,23 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void creditsDraw(GameTime gameTime)
         {
+            
             //TODO set creditsFinished = true when credits are finished
+            gm.drawString("Tetris Tribute", 250, (creditTime / 8) - 1840, Color.Blue);
+            gm.drawString("2009", 290, (creditTime / 8) - 1800, Color.Blue);
+
+            gm.drawString("Jason Newbold", 250, (creditTime/8) - 500, Color.Blue);
+            gm.drawString("Game Play Coordinator", 190, (creditTime / 8) - 540, Color.Blue);
+
+            gm.drawString("Jacob Dutson", 250, (creditTime/8) - 1300, Color.Blue);
+            gm.drawString("Artificial Intelligence", 185, (creditTime/8) -1340, Color.Blue);
+
+            gm.drawString("Dallin", 250, (creditTime / 8) - 900, Color.Blue);
+            gm.drawString("Graphic Designer", 200, (creditTime / 8) - 940, Color.Blue);
+
+            gm.drawString("Special Thanks to", 225, (creditTime / 8) -40, Color.Blue);
+            gm.drawString("Dean Mathias", 250, (creditTime / 8), Color.Blue);
+
         }
 
         /// <summary>
@@ -476,7 +541,13 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void scoreDraw(GameTime gameTime)
         {
-            
+            gm.drawString("High Scores", 150, 60, Color.Blue);
+            for (int i = 0; i < 10; i++)
+            {
+                gm.drawString((i + 1) + ". " + high.getHighScores()[i][0], 150, (i *50) + 100, Color.Blue);
+                gm.drawString(high.getHighScores()[i][1], 650, (i * 50) + 100, Color.Blue);
+            }
+
         }
 
         //for debugging only
