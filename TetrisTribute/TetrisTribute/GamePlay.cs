@@ -29,8 +29,6 @@ namespace TetrisTribute
         public const int CREDITS = 2;
         public const int EXIT = 3;
 
-        int[][] displayBoard;
-
         //const to determine if gameboard is empty
         const int EMPTY = 0;
 
@@ -72,6 +70,8 @@ namespace TetrisTribute
         int creditTime;
         //stores the menu item that is currently selected
         int selectedMenuItem;
+        int level;
+        int linesCleared;
 
         double moveTime;
         public GamePlay()
@@ -93,13 +93,16 @@ namespace TetrisTribute
             // TODO: Add your initialization logic here
            
             //TODO set drop speed
-            dropTime = 500;
-            dropSpeed = 500;
+            dropTime = 350;
+            dropSpeed = 350;
             idleTime = 30000;
             creditTime = 18000;
             creditsFinished = false;
             score = 0;
             moveTime = 500;
+            level = 1;
+            linesCleared = 0;
+
 
             update = new updateDelegate(menuUpdate);
             draw = new drawDelegate(menuDraw);
@@ -180,8 +183,8 @@ namespace TetrisTribute
 
         public void reset()
         {
-            dropTime = 500;
-            dropSpeed = 500;
+            dropTime = 350;
+            dropSpeed = 350;
             
             score = 0;
             moveTime = 500;
@@ -338,7 +341,7 @@ namespace TetrisTribute
             {
                 //move one space to the Left
                 piece.rotatePiece();
-                if (!canMove(piece.getCurRow() + 1, piece.getCurColumn(), down))
+                if (!canMove(piece.getCurRow() - 1, piece.getCurColumn(), down))
                 {
                     piece.rotatePiece();
                     piece.rotatePiece();
@@ -385,18 +388,22 @@ namespace TetrisTribute
                             }
                         }
                     }
-                    printGame();
+
                     clearRows();
                     
                     piece.updatePiece();
-                    if (!canMove(piece.getCurRow(), piece.getCurColumn(), down))
+                    if (!canMove(piece.getCurRow() - 1, piece.getCurColumn(), down))
                     {
                         update = new updateDelegate(menuUpdate);
                         //draw = new drawDelegate(gameDraw);
-                        //TODO GAME OVER
+                        //TODO GAME OVER check for high score
                         userInput.setMenuControl(true);
                         printGame();
                         int a = 5;
+                    }
+                    else
+                    {
+                        score += 10;
                     }
                 }
                 dropTime = dropSpeed;
@@ -503,6 +510,7 @@ namespace TetrisTribute
             // call this, passing the gameboard to draw the board
 
             gm.drawString("Tetris!!", 0, 0, Color.Tomato);
+            gm.drawString(score.ToString(), 0, 100, Color.Tomato);
 
             gm.drawPiece(piece.getCurPiece(), 250 + (30 * piece.getCurColumn()), -30 + (30 * piece.getCurRow()));
             // call this to draw a piece: aPiece at x and y
@@ -567,6 +575,7 @@ namespace TetrisTribute
 
         private void clearRows()
         {
+            int clearScore = 0;
             for (int i = 0; i < ROWS; i++)
             {
                 bool clear = true;
@@ -579,6 +588,20 @@ namespace TetrisTribute
                 }
                 if (clear)
                 {
+                    if (clearScore != 0)
+                    {
+                        clearScore = clearScore * 2;
+                    }
+                    else
+                    {
+                        clearScore = 100;
+                    }
+                    linesCleared++;
+                    if (linesCleared % 10 == 0 && linesCleared<=100)
+                    {
+                        level++;
+                        dropSpeed =  dropSpeed - 25;
+                    }
                     for (int k = i; k > 0 && clear; k--)
                     {
                         for (int j = 0; j < COLUMNS && clear; j++)
@@ -590,9 +613,9 @@ namespace TetrisTribute
                     {
                         gameBoard[0][j] = EMPTY;
                     }
-                    //i++;
                 }
             }
+            score += clearScore;
         }
 
         private bool canMove(int curRow, int curColumn, int direction)
