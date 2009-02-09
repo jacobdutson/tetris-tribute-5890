@@ -107,7 +107,7 @@ namespace TetrisTribute
                 }
 
                 //left thumbstick
-                if (padState.ThumbSticks.Left.X > 0 )
+                if (padState.ThumbSticks.Left.X > 0)
                 {
                     right = true;
                 }
@@ -140,7 +140,7 @@ namespace TetrisTribute
                     }
                 }
 
-            }
+            }           
             
 
         }

@@ -26,7 +26,7 @@ namespace TetrisTribute
         public const int NUMBER_OF_ROTATIONS = 4;
         public const int LINE_CLEAR_BONUS = 20;
         public const int NO_GAPS_BONUS = 25;
-        public const int LOWEST_BONUS = 10;
+        public const int LOWEST_BONUS = 30;
 
         // Declare class data members:
         private Queue<int> inputsQueue;	    // Stores a queue of keys that the AI has pressed.
@@ -50,18 +50,23 @@ namespace TetrisTribute
          */
         public AI()
         {
+            reset();
+
+            kill = false;
+            pause = false;
+            resume = false;
+        }
+
+        public void reset()
+        {
             // Allocate space for data members:
             inputsQueue = new Queue<int>();
             currentPiece = new Piece();
             movePiece = new Piece();
-            moveLocation = new Location();
-            currentBoard = new int [GAME_BOARD_Y_MAX , GAME_BOARD_X_MAX];
+            currentBoard = new int[GAME_BOARD_Y_MAX, GAME_BOARD_X_MAX];
             columnTops = new int[GAME_BOARD_X_MAX];
             locations = new List<Location>(50);
             chosenLocation = new Location();
-            kill = false;
-            pause = false;
-            resume = false;
         }
 
         public bool Kill
@@ -150,26 +155,21 @@ namespace TetrisTribute
             do
             {*/
                 // Call function to chose a place on the board to steer the piece to:
+            if (!Pause)
+            {
                 findLocation();
-                // Add input signals for the final rotates:
-                for (int rotateAdder = 0; rotateAdder < chosenLocation.RotateCount; rotateAdder++)
-                {
-                    inputsQueue.Enqueue(ROTATE_KEY_PRESS);
-                }
-                //needNewLocation = false;
+            
 
                 // Check if the current game piece make the next move:
-                while (atDestination())
+                while (!atDestination())
                 {
                     // Loop twice to get both rotations if the piece can't move where it needs to with the first rotation:
-                    for (int numRotations = 0; numRotations < 4; numRotations++)
-                    {
+                    //for (int numRotations = 0; numRotations < 4; numRotations++)
+                    //{
                         // Could it move?
-                        if (moveOnce())
-                        {
-                            break;
-                        }
-                        else 
+                    moveOnce();
+                        
+                     /*   else 
                         {   // NO.  Has it already rotated?
                             if (numRotations != 3)
                             {
@@ -183,7 +183,7 @@ namespace TetrisTribute
                                 /*
                                 // YES.  Reduce the board and let it try finding a new location.
                                 reduceBoard();
-                                needNewLocation = true;*/
+                                needNewLocation = true;
                             }
                         }
                     }
@@ -197,10 +197,23 @@ namespace TetrisTribute
 
                 }
 
-            //} while (needNewLocation);
+                // Add input signals for the final rotates:
+                for (int rotateAdder = 0; rotateAdder < chosenLocation.RotateCount; rotateAdder++)
+                {
+                    inputsQueue.Enqueue(ROTATE_KEY_PRESS);
+                }
 
-            // Call function to generate the input signals to tell the GamePlay class how the AI wants to move it's piece:
             
+
+                // Add move down signal:
+                for (int speedUpInputCounter = 0; speedUpInputCounter < 100; speedUpInputCounter++)
+                {
+                    inputsQueue.Enqueue(SPEED_UP_KEY_PRESS);
+                }
+           //} while (needNewLocation);
+
+            }
+             
         }
 
 
@@ -214,31 +227,44 @@ namespace TetrisTribute
          * reached the chosen location and FALSE if the AI
          * piece has not reached that location.
          */
-        private bool atDestination()            /// THERE IS A PROBLEM HERE!!!!!
+        private bool atDestination()            
         {
             // Declare local variables:
             bool atDest = false;
-            int numPointsEqual = 0;
-            Location moveLoc = new Location();
-            moveLoc.adjustPointsForLocation(movePiece, movePiece.X, movePiece.Y);
-                
+            //int numPointsEqual = 0;
+
+            if (chosenLocation.MinX == movePiece.X)
+            {
+                atDest = true;
+            }
+
             // Check if the points inside of the move location
             // are the same points in the chosen location:
-            for( int pointCounter = 0; pointCounter < 4 ; pointCounter++)
+            /*foreach(Point currentPoint in chosenLocation.getPoints())
             {
-                // Check if the x and y coordinates of the current
-                // point are the same as the ones in the destination.
-                if (moveLoc.getPoints()[pointCounter] == chosenLocation.getPoints()[pointCounter])
+                // Loop through the points in the move piece:
+                for (int row = 0; row < movePiece.PieceArray.Length; row++)
                 {
-                    numPointsEqual++;
-                }                
+                    for (int column = 0; column < movePiece.PieceArray.Length; column++)
+                    {
+                        if (movePiece.PieceArray[row][column] != 0)
+                        {
+                            // Check if the x and y coordinates of the current
+                            // point are the same as the ones in the destination.
+                            if (((movePiece.X + column) == currentPoint.X)) //&& ((movePiece.Y + row) == currentPoint.Y))
+                            {
+                                numPointsEqual++;
+                            }
+                        }
+                    }
+                }
             }
 
             // Check to see if all the points were equal:
             if (numPointsEqual == 4)
             {
                 atDest = true;
-            }
+            }*/
             
             return atDest;
         }
@@ -290,7 +316,7 @@ namespace TetrisTribute
 
                 // Loop through the each column until the last column that will still allow the 
                 // piece to stay on the game board.  Looping starts on the left side of the board:
-                for (int columnCounter = 0; columnCounter < (GAME_BOARD_X_MAX - pieceWidth); columnCounter++)
+                for (int columnCounter = 0; columnCounter < (GAME_BOARD_X_MAX - (currentPiece.PieceArray.Length - 1)); columnCounter++)
                 {
                     // Call method to set the points in temp to the landing position above the current column:
                     temp.adjustPointsForLocation(currentPiece, columnCounter, columnTops[columnCounter]);
@@ -397,7 +423,7 @@ namespace TetrisTribute
 
         /**
          * Copy of the Game Piece classes rotate piece method.
-         * This one adds the argument.
+         * This one adds the argument and changes return type.
          * Note: Jason Newbold wrote most of this.
          */ 
         private Piece rotatePiece(Piece cPiece)
@@ -449,6 +475,41 @@ namespace TetrisTribute
             return (new Piece(curPiece));
      
         }
+
+        /**
+         * Copy of the Game Play classes canMove method.
+         * Note: Jason Newbold wrote most of this.
+         */ 
+        public bool canMove(int curRow, int curColumn, int direction)
+        {
+            //direction  -1 left,  0 down,  1 right
+
+            int down = (direction + 1) % 2;
+
+            for (int row = 0; row < movePiece.PieceArray.Length; row++)
+            {
+                for (int column = 0; column < movePiece.PieceArray.Length; column++)
+                {
+                    //check if at a wall  ??? what about emtpy bottom row on curpiece
+                    if ((curRow + row + down) >= GAME_BOARD_Y_MAX || (curColumn + column + direction) >= GAME_BOARD_X_MAX || (curColumn + column + direction) < 0)
+                    {
+                        if (movePiece.PieceArray[row][column] != GamePlay.EMPTY)
+                        {
+                            return false;
+                        }
+
+                    }
+                    else if (currentBoard[curRow + row + down, curColumn + column + direction] != GamePlay.EMPTY && movePiece.PieceArray[row][column] != GamePlay.EMPTY)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+
 
         /**
          * Checks to see how many lines (rows) on the game board 
@@ -596,10 +657,8 @@ namespace TetrisTribute
             {
                 return moveLeft();
             }
-            else
-            {
-                return true;
-            }
+
+            return true;
         }
 
         /**
@@ -610,20 +669,24 @@ namespace TetrisTribute
          * @return -- Boolean value, TRUE if the piece moved without 
          * colliding, and FALSE if it couldn't move without colliding.
          */
-        private bool moveLeft()         // NEEDS A COLLISION DETECTOR!!!!!!!!
+        private bool moveLeft()         
         {
-            // Move the piece left.
-            movePiece.X--;
+            // Declare local variables:
+            int left = -1;
 
             // Check if it ran into another game piece:
-            if (false /*didCollide(movePiece)*/)
+            if (!canMove(movePiece.Y, movePiece.X, left) )  
             {
-                movePiece.X++;
                 return false;
             }
             else
             {
+                // Move the piece left:
+                movePiece.X--;
+
+                // Update inputs queue:
                 inputsQueue.Enqueue(LEFT_KEY_PRESS);
+                //inputsQueue.Enqueue(NO_KEYS_PRESSED);
                 return true;
             }
         }
@@ -636,20 +699,24 @@ namespace TetrisTribute
          * @return -- Boolean value, TRUE if the piece moved without 
          * colliding, and FALSE if it couldn't move without colliding.
          */
-        private bool moveRight()        // NEEDS A COLLISION DETECTOR!!!!!!!!
+        private bool moveRight()       
         {
-            // Move the piece right.
-            movePiece.X++;
+            // Declare local variables:
+            int right = 1;
 
             // Check if it ran into another game piece:
-            if (false /*didCollide(movePiece)*/)
+            if (!canMove(movePiece.Y, movePiece.X, right))
             {
-                movePiece.X--;
                 return false;
             }
             else
             {
+                // Move the piece right.
+                movePiece.X++;
+
+                // Update inputs queue:
                 inputsQueue.Enqueue(RIGHT_KEY_PRESS);
+                //inputsQueue.Enqueue(NO_KEYS_PRESSED);
                 return true;
             }
         }
@@ -895,13 +962,13 @@ namespace TetrisTribute
                         setPoint(this.points_[adjustCount].X, this.points_[adjustCount].Y + (row - tempMaxY), adjustCount);
                     }
                 }
-                /*if (didCollide(this))
+                /*if (canMove())        // MIGHT WANT TO TRY THIS AGAIN!!!!!
                 {
                     for (int adjustCount = 0; adjustCount < POINTS_ARRAY_SIZE; adjustCount++)
                     {
                         setPoint(this.points_[index].X, this.points_[index].Y - (row - this.maxY), index);
                     }
-                } */
+                }*/
 
 
             }
