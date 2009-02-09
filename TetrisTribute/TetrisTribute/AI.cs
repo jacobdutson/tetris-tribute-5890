@@ -26,7 +26,7 @@ namespace TetrisTribute
         public const int NUMBER_OF_ROTATIONS = 4;
         public const int LINE_CLEAR_BONUS = 20;
         public const int NO_GAPS_BONUS = 25;
-        public const int LOWEST_BONUS = 30;
+        public const int LOWEST_BONUS = 15;
 
         // Declare class data members:
         private Queue<int> inputsQueue;	    // Stores a queue of keys that the AI has pressed.
@@ -316,7 +316,7 @@ namespace TetrisTribute
 
                 // Loop through the each column until the last column that will still allow the 
                 // piece to stay on the game board.  Looping starts on the left side of the board:
-                for (int columnCounter = 0; columnCounter < (GAME_BOARD_X_MAX - (currentPiece.PieceArray.Length - 1)); columnCounter++)
+                for (int columnCounter = 0; columnCounter <= (GAME_BOARD_X_MAX - pieceWidth); columnCounter++)
                 {
                     // Call method to set the points in temp to the landing position above the current column:
                     temp.adjustPointsForLocation(currentPiece, columnCounter, columnTops[columnCounter]);
@@ -743,16 +743,16 @@ namespace TetrisTribute
             {
                 get{return x;} 
                 set{ // Checks if the point is a valid location on the game board.  
-                    if (value < GAME_BOARD_X_MIN || value > GAME_BOARD_X_MAX)
+                    /*if (value < GAME_BOARD_X_MIN || value >= GAME_BOARD_X_MAX)
                     {
                         // If it's not valid then it sets the point's x value to the game boards origin and throws an exception.
                         x = 0;  
                         throw new Exception("AI Point Class Error:  The game attempted to give a point a x-value out of the game boards bounds.");
                     }
                     else
-                    {
+                    {*/
                         x = value;
-                    }
+                    //}
                 }
             }
             /**
@@ -763,16 +763,16 @@ namespace TetrisTribute
                 get { return y; }
                 set
                 { // Checks if the point is a valid location on the game board.  
-                    if (value < GAME_BOARD_Y_MIN || value > GAME_BOARD_Y_MAX)
+                   /* if (value < GAME_BOARD_Y_MIN || value >= GAME_BOARD_Y_MAX)
                     {
                         // If it's not valid then it sets the point's y value to the game boards origin and throws an exception.
                         y = 0;
                         throw new Exception("AI Point Class Error:  The game attempted to give a point a y-value out of the game boards bounds.");
                     }
                     else
-                    {
+                    {*/
                         y = value;
-                    }
+                    //}
                 }
             }
 				
@@ -934,16 +934,16 @@ namespace TetrisTribute
                         // Test if the current location in temp piece is an game piece block:
                         if (tempPiece.PieceArray[rowCount][colCount] != 0)
                         {
-                            if (tempPiece.getHeight() == 1)
+                            /*if (tempPiece.getHeight() == 1)
                             {
                                 // Add the point to the location:
                                 setPoint(colCount + column, row - tempPiece.PieceArray.Length + rowCount - 2, index);
                             }
                             else
-                            {
+                            {*/
                                 // Add the point to the location:
                                 setPoint(colCount + column, row - tempPiece.PieceArray.Length + rowCount + 1, index);
-                            }
+                            //}
 
                             
 
@@ -957,9 +957,18 @@ namespace TetrisTribute
                 int tempMaxY = this.MaxY;
                 if (tempMaxY < row)
                 {
-                    for (int adjustCount = 0; adjustCount < POINTS_ARRAY_SIZE; adjustCount++)
+                    for (int adjustYCount = 0; adjustYCount < POINTS_ARRAY_SIZE; adjustYCount++)
                     {
-                        setPoint(this.points_[adjustCount].X, this.points_[adjustCount].Y + (row - tempMaxY), adjustCount);
+                        setPoint(this.points_[adjustYCount].X, this.points_[adjustYCount].Y + (row - tempMaxY), adjustYCount);
+                    }
+                }
+
+                int tempMinX = this.MinX;
+                if (tempMinX > column)
+                {
+                    for (int adjustXCount = 0; adjustXCount < POINTS_ARRAY_SIZE; adjustXCount++)
+                    {
+                        setPoint(this.points_[adjustXCount].X - (tempMinX - column), this.points_[adjustXCount].Y, adjustXCount);
                     }
                 }
                 /*if (canMove())        // MIGHT WANT TO TRY THIS AGAIN!!!!!
