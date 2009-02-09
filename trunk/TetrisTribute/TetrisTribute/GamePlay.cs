@@ -30,7 +30,7 @@ namespace TetrisTribute
         public const int EXIT = 3;
 
         //const to determine if gameboard is empty
-        const int EMPTY = 0;
+        public const int EMPTY = 0;
 
         //variables assiociated with the graphics
         public GraphicsDeviceManager graphics;
@@ -42,6 +42,9 @@ namespace TetrisTribute
 
         //class that manages the creation, rotation of game pieces
         GamePiece piece;
+
+        // AI class to start and manage the AI player:
+        AI ai;
 
         //Input class to get user input from keyboard, gamepad, AI
         Input userInput;
@@ -56,6 +59,7 @@ namespace TetrisTribute
 
         //double array that represents the current tetris board
         int[][] gameBoard;
+        int[] columnTops; 
         //stores the current user score
         int score;
         //milliseconds remaining till the peice drops
@@ -95,7 +99,7 @@ namespace TetrisTribute
             //TODO set drop speed
             dropTime = 350;
             dropSpeed = 350;
-            idleTime = 30000;
+            idleTime = 1000;
             creditTime = 18000;
             creditsFinished = false;
             score = 0;
@@ -117,6 +121,16 @@ namespace TetrisTribute
                 {
                     gameBoard[i][j] = 0;
                 }
+            }
+
+            // Initialize the array that stores the information about
+            // where the highest piece in each column of the game
+            // board is located:
+            columnTops = new int[COLUMNS];
+            for (int columnIndex = 0; columnIndex < COLUMNS; columnIndex++)
+            {
+                // Set the initial value to the bottom of the game board.
+                columnTops[columnIndex] = ROWS - 1;
             }
 
             base.Initialize();
@@ -197,6 +211,15 @@ namespace TetrisTribute
                     gameBoard[i][j] = 0;
                 }
             }
+
+            // Initialize the array that stores the information about
+            // where the highest piece in each column of the game
+            // board is located:
+            for (int columnIndex = 0; columnIndex < COLUMNS; columnIndex++)
+            {
+                // Set the initial value to the bottom of the game board.
+                columnTops[columnIndex] = ROWS - 1;
+            }
         }
 
 
@@ -265,8 +288,131 @@ namespace TetrisTribute
             if (idleTime < 0)
             {
                 idleTime = 30000;
+                
                 //TODO CODE TO START AI
+
+                reset();
+                // Initialize the AI player:
+                ai = new AI();
+
+                update = new updateDelegate(attrackModeUpdate);
+                draw = new drawDelegate(gameDraw);
+
             }
+        }
+
+        /// <summary>
+        /// Allows the game to run logic needed for the game being played
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        private void attrackModeUpdate(GameTime gameTime)
+        {
+            KeyboardState state = Keyboard.GetState();
+            int nextAIInput = 0;
+            int right = 1;
+            int down = 0;
+            int left = -1;
+
+            // Check if the user wants to end Attrack Mode.
+            if (userInput.Enter == true || userInput.Left == true || userInput.Right == true || userInput.Up == true || userInput.Down == true)
+            {
+                update = new updateDelegate(menuUpdate);
+                draw = new drawDelegate(menuDraw);
+            }
+
+            try
+            {
+                // Tell AI player to play the current piece:
+                ai.playCurrentPiece(gameBoard, columnTops, piece.getCurPiece());
+                nextAIInput = ai.getKeyPressed();
+                ai.Pause = true;
+                
+            }
+            catch (Exception err)
+            {
+                Console.Out.WriteLine(err.Message);
+            }
+
+            if (nextAIInput == AI.RIGHT_KEY_PRESS)
+            {
+                //move one space to the right
+                if (canMove(piece.getCurRow(), piece.getCurColumn(), right))
+                {
+                    piece.setCurColumn(piece.getCurColumn() + right);
+                }
+            }
+
+            if (nextAIInput == AI.LEFT_KEY_PRESS)
+            {
+                //move one space to the Left
+                if (canMove(piece.getCurRow(), piece.getCurColumn(), left))
+                {
+                    piece.setCurColumn(piece.getCurColumn() + left);
+                }
+            }
+
+            if (nextAIInput == AI.ROTATE_KEY_PRESS)
+            {
+                //move one space to the Left
+                piece.rotatePiece();
+                if (!canMove(piece.getCurRow() + 1, piece.getCurColumn(), down))
+                {
+                    piece.rotatePiece();
+                    piece.rotatePiece();
+                    piece.rotatePiece();
+                    //UNDUE rotate
+                }
+            }
+
+            if (nextAIInput == AI.SPEED_UP_KEY_PRESS)
+            {
+                //get time and move Left accordingly
+                int mult = 8;
+                dropTime = dropTime - (gameTime.ElapsedGameTime.Milliseconds * mult);
+            }
+ 
+            dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
+
+            if (dropTime < 0)
+            {
+                if (canMove(piece.getCurRow(), piece.getCurColumn(), down))
+                {
+                    piece.setCurRow(piece.getCurRow() + 1);
+                }
+                else
+                {
+                    for (int i = 0; i < piece.getCurPiece().Length; i++)
+                    {
+                        for (int j = 0; j < piece.getCurPiece().Length; j++)
+                        {
+                            if (piece.getCurPiece()[i][j] != EMPTY && (piece.getCurRow() + i) < ROWS
+                                && (piece.getCurColumn() + j) < COLUMNS)
+                            {
+                                gameBoard[piece.getCurRow() + i][piece.getCurColumn() + j] = piece.getCurPiece()[i][j];
+                                columnTops[piece.getCurColumn() + j] = piece.getCurRow() + i;
+                            }
+                        }
+                    }
+                    printGame();
+                    clearRows();
+
+                    piece.updatePiece();
+                    ai.reset();
+                    ai.Pause = false;
+                    if (!canMove(piece.getCurRow(), piece.getCurColumn(), down))
+                    {
+                        update = new updateDelegate(menuUpdate);
+                        //draw = new drawDelegate(gameDraw);
+                        //TODO GAME OVER
+                        userInput.setMenuControl(true);
+                        printGame();
+                        int a = 5;
+                    }
+                }
+                dropTime = dropSpeed;
+            }
+
+
         }
 
         /// <summary>
@@ -385,6 +531,7 @@ namespace TetrisTribute
                                 && (piece.getCurColumn() + j) < COLUMNS)
                             {
                                 gameBoard[piece.getCurRow() + i][piece.getCurColumn() + j] = piece.getCurPiece()[i][j];
+                                columnTops[piece.getCurColumn() + j] = piece.getCurRow() + i;
                             }
                         }
                     }
@@ -427,12 +574,7 @@ namespace TetrisTribute
                 update = new updateDelegate(menuUpdate);
                 draw = new drawDelegate(menuDraw);
             }
-            creditTime = creditTime - gameTime.ElapsedGameTime.Milliseconds;
-            if (creditTime < 0)
-            {
-                creditsFinished = true;
-            }
-
+            creditTime = creditTime - gameTime.ElapsedGameTime.Milliseconds;            if (creditTime < 0)            {                creditsFinished = true;            }
         }
 
         /// <summary>
@@ -618,7 +760,7 @@ namespace TetrisTribute
             score += clearScore;
         }
 
-        private bool canMove(int curRow, int curColumn, int direction)
+        public bool canMove(int curRow, int curColumn, int direction)
         {
             //direction  -1 left,  0 down,  1 right
 
