@@ -39,7 +39,7 @@ namespace TetrisTribute
 
             // TODO: use this.Content to load your game content here\
             blocks = m_content.Load<Texture2D>(@"Content\blocks2");
-            afont = m_content.Load<SpriteFont>(@"Content\Courier New");
+            afont = m_content.Load<SpriteFont>(@"Content\bowellberalta");
         }
 
         public void drawPiece(int[][] aPiece, int x, int y)
@@ -62,10 +62,10 @@ namespace TetrisTribute
             drawPiece(gameboard, (400 - TILESIZE * 5), 0);
         }
 
-        public void drawString(string aString, int x, int y, Color fontColor)
+        public void drawString(string aString, int x, int y, Color fontColor, float scale)
         {
             spriteBatch.Begin();
-            spriteBatch.DrawString(afont, aString, new Vector2(x, y), fontColor);
+            spriteBatch.DrawString(afont, aString, new Vector2(x, y), fontColor, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
             spriteBatch.End();
         }
     }

@@ -7,8 +7,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\blocks.xnb</Output>
-      <Time>2009-02-06T09:46:53.159375-07:00</Time>
+      <Output>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\blocks.xnb</Output>
+      <Time>2009-02-09T09:11:41.186625-07:00</Time>
     </Item>
     <Item>
       <Source>blocks2.bmp</Source>
@@ -16,8 +16,8 @@
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\blocks2.xnb</Output>
-      <Time>2009-02-07T11:14:52.843-07:00</Time>
+      <Output>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\blocks2.xnb</Output>
+      <Time>2009-02-09T09:11:41.186625-07:00</Time>
     </Item>
     <Item>
       <Source>Courier New.spritefont</Source>
@@ -25,18 +25,27 @@
       <Importer>FontDescriptionImporter</Importer>
       <Processor>FontDescriptionProcessor</Processor>
       <Options>None</Options>
-      <Output>C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\Courier New.xnb</Output>
-      <Time>2008-10-28T08:21:44-07:00</Time>
+      <Output>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\Courier New.xnb</Output>
+      <Time>2009-02-09T09:11:41.186625-07:00</Time>
+    </Item>
+    <Item>
+      <Source>bowellberalta.spritefont</Source>
+      <Name>bowellberalta</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\bowellberalta.xnb</Output>
+      <Time>2009-02-09T09:36:24.14-07:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>
       <TargetPlatform>Windows</TargetPlatform>
       <BuildConfiguration>Debug</BuildConfiguration>
       <CompressContent>false</CompressContent>
-      <RootDirectory>C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\Content\</RootDirectory>
-      <LoggerRootDirectory>C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\</LoggerRootDirectory>
-      <IntermediateDirectory>C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\Content\obj\x86\Debug\</IntermediateDirectory>
-      <OutputDirectory>C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\</OutputDirectory>
+      <RootDirectory>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\Content\</RootDirectory>
+      <LoggerRootDirectory>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\</LoggerRootDirectory>
+      <IntermediateDirectory>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\Content\obj\x86\Debug\</IntermediateDirectory>
+      <OutputDirectory>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\</OutputDirectory>
     </Settings>
     <Assemblies>
       <Assembly>

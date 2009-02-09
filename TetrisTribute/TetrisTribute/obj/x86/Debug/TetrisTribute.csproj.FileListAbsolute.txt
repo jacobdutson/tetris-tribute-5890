@@ -22,3 +22,13 @@ C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute
 C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\TetrisTribute.pdb
 C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\Courier New.xnb
 C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\Courier New.xnb
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\blocks.xnb
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\blocks2.xnb
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\Courier New.xnb
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\TetrisTribute.exe
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\TetrisTribute.pdb
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\obj\x86\Debug\Microsoft.Xna.Framework.RuntimeProfile.txt
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.exe
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.pdb
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\bowellberalta.xnb

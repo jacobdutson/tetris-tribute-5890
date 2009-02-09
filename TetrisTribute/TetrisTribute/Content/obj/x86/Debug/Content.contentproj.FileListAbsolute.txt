@@ -1,3 +1,4 @@
 C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\Content\obj\x86\Debug\ResolveAssemblyReference.cache
 R:\School Work\Spring_2009\Jacobs_Classes\CS_5890\Homework\Homework2\TetrisGame\TetrisTribute\TetrisTribute\Content\obj\x86\Debug\ResolveAssemblyReference.cache
 C:\Documents and Settings\Dallin\My Documents\Tetris\TetrisTribute\TetrisTribute\Content\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\Content\obj\x86\Debug\ResolveAssemblyReference.cache
