@@ -325,94 +325,110 @@ namespace TetrisTribute
                 // Tell AI player to play the current piece:
                 ai.playCurrentPiece(gameBoard, columnTops, piece.getCurPiece());
                 nextAIInput = ai.getKeyPressed();
-                ai.Pause = true;
-                
             }
             catch (Exception err)
             {
                 Console.Out.WriteLine(err.Message);
             }
 
-            if (nextAIInput == AI.RIGHT_KEY_PRESS)
-            {
-                //move one space to the right
-                if (canMove(piece.getCurRow(), piece.getCurColumn(), right))
-                {
-                    piece.setCurColumn(piece.getCurColumn() + right);
-                }
-            }
 
-            if (nextAIInput == AI.LEFT_KEY_PRESS)
-            {
-                //move one space to the Left
-                if (canMove(piece.getCurRow(), piece.getCurColumn(), left))
-                {
-                    piece.setCurColumn(piece.getCurColumn() + left);
-                }
-            }
+            
+            ai.Pause = true;
+            
 
-            if (nextAIInput == AI.ROTATE_KEY_PRESS)
-            {
-                //move one space to the Left
-                piece.rotatePiece();
-                if (!canMove(piece.getCurRow() + 1, piece.getCurColumn(), down))
-                {
-                    piece.rotatePiece();
-                    piece.rotatePiece();
-                    piece.rotatePiece();
-                    //UNDUE rotate
-                }
-            }
+            
 
-            if (nextAIInput == AI.SPEED_UP_KEY_PRESS)
-            {
-                //get time and move Left accordingly
-                int mult = 8;
-                dropTime = dropTime - (gameTime.ElapsedGameTime.Milliseconds * mult);
-            }
- 
-            dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
-
-            if (dropTime < 0)
-            {
-                if (canMove(piece.getCurRow(), piece.getCurColumn(), down))
-                {
-                    piece.setCurRow(piece.getCurRow() + 1);
-                }
-                else
-                {
-                    for (int i = 0; i < piece.getCurPiece().Length; i++)
+                    if (nextAIInput == AI.RIGHT_KEY_PRESS)
                     {
-                        for (int j = 0; j < piece.getCurPiece().Length; j++)
+                        //move one space to the right
+                        if (canMove(piece.getCurRow(), piece.getCurColumn(), right))
                         {
-                            if (piece.getCurPiece()[i][j] != EMPTY && (piece.getCurRow() + i) < ROWS
-                                && (piece.getCurColumn() + j) < COLUMNS)
-                            {
-                                gameBoard[piece.getCurRow() + i][piece.getCurColumn() + j] = piece.getCurPiece()[i][j];
-                                columnTops[piece.getCurColumn() + j] = piece.getCurRow() + i;
-                            }
+                            piece.setCurColumn(piece.getCurColumn() + right);
                         }
                     }
-                    printGame();
-                    clearRows();
 
-                    piece.updatePiece();
-                    ai.reset();
-                    ai.Pause = false;
-                    if (!canMove(piece.getCurRow(), piece.getCurColumn(), down))
+                    if (nextAIInput == AI.LEFT_KEY_PRESS)
                     {
-                        update = new updateDelegate(menuUpdate);
-                        //draw = new drawDelegate(gameDraw);
-                        //TODO GAME OVER
-                        userInput.setMenuControl(true);
-                        printGame();
-                        int a = 5;
+                        //move one space to the Left
+                        if (canMove(piece.getCurRow(), piece.getCurColumn(), left))
+                        {
+                            piece.setCurColumn(piece.getCurColumn() + left);
+                        }
                     }
+
+                    if (nextAIInput == AI.ROTATE_KEY_PRESS)
+                    {
+                        //move one space to the Left
+                        piece.rotatePiece();
+                        if (!canMove(piece.getCurRow() + 1, piece.getCurColumn(), down))
+                        {
+                            piece.rotatePiece();
+                            piece.rotatePiece();
+                            piece.rotatePiece();
+                            //UNDUE rotate
+                        }
+                    }
+
+                    if (nextAIInput == AI.SPEED_UP_KEY_PRESS)
+                    {
+                        //get time and move Left accordingly
+                        int mult = 8;
+                        dropTime = dropTime - (gameTime.ElapsedGameTime.Milliseconds * mult);
+                    }
+
+            
+                    dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
+                    if (dropTime < 0)
+                    {
+                        if (canMove(piece.getCurRow(), piece.getCurColumn(), down))
+                        {
+                            piece.setCurRow(piece.getCurRow() + 1);
+                        }
+                        else
+                        {
+                            for (int i = 0; i < piece.getCurPiece().Length; i++)
+                            {
+                                for (int j = 0; j < piece.getCurPiece().Length; j++)
+                                {
+                                    if (piece.getCurPiece()[i][j] != EMPTY && (piece.getCurRow() + i) < ROWS
+                                        && (piece.getCurColumn() + j) < COLUMNS)
+                                    {
+                                        gameBoard[piece.getCurRow() + i][piece.getCurColumn() + j] = piece.getCurPiece()[i][j];
+
+                                        // Check to see if the top of the column needs to be updated:  
+                                        // (It won't if a previous block in this piece has been placed higher up on the board and already set the column top.)
+                                        if (columnTops[piece.getCurColumn() + j] >= piece.getCurRow() + i - 1)
+                                        {
+                                            columnTops[piece.getCurColumn() + j] = piece.getCurRow() + i - 1;
+                                        }
+                                    }
+                                }
+                            }
+
+                            clearRows();
+
+                            piece.updatePiece();
+                            ai.reset();
+                            ai.Pause = false;
+                            if (!canMove(piece.getCurRow() - 1, piece.getCurColumn(), down))
+                            {
+                                update = new updateDelegate(menuUpdate);
+                                //draw = new drawDelegate(gameDraw);
+                                //TODO GAME OVER check for high score
+                                userInput.setMenuControl(true);
+                                printGame();
+                                int a = 5;
+                            }
+                            else
+                            {
+                                score += 10;
+                            }
+                        }
+                        dropTime = dropSpeed;
+
                 }
-                dropTime = dropSpeed;
-            }
-
-
+                
+            
         }
 
         /// <summary>
@@ -531,7 +547,13 @@ namespace TetrisTribute
                                 && (piece.getCurColumn() + j) < COLUMNS)
                             {
                                 gameBoard[piece.getCurRow() + i][piece.getCurColumn() + j] = piece.getCurPiece()[i][j];
-                                columnTops[piece.getCurColumn() + j] = piece.getCurRow() + i;
+
+                                // Check to see if the top of the column needs to be updated:  
+                                // (It won't if a previous block in this piece has been placed higher up on the board and already set the column top.)
+                                if (columnTops[piece.getCurColumn() + j] >= piece.getCurRow() + i - 1)
+                                {
+                                    columnTops[piece.getCurColumn() + j] = piece.getCurRow() + i - 1;
+                                }
                             }
                         }
                     }
