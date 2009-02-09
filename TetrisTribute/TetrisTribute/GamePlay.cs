@@ -610,34 +610,34 @@ namespace TetrisTribute
             }
             else
             {
-                gm.drawString("Play Tetris", 250, 20, Color.Blue, 1.0f);
+                gm.drawString("PLAY TETRIS", 250, 20, Color.Blue, 1.0f);
             }
 
             if (selectedMenuItem == HIGH)
             {
-                gm.drawString("High Scores", 250, 60, Color.Aquamarine, 1.0f);
+                gm.drawString("HIGH SCORES", 250, 60, Color.Aquamarine, 1.0f);
             }
             else
             {
-                gm.drawString("High Scores", 250, 60, Color.Blue, 1.0f);
+                gm.drawString("HIGH SCORES", 250, 60, Color.Blue, 1.0f);
             }
 
             if (selectedMenuItem == CREDITS)
             {
-                gm.drawString("Credits", 250, 100, Color.Aquamarine, 1.0f);
+                gm.drawString("CREDITS", 250, 100, Color.Aquamarine, 1.0f);
             }
             else
             {
-                gm.drawString("Credits", 250, 100, Color.Blue, 1.0f);
+                gm.drawString("CREDITS", 250, 100, Color.Blue, 1.0f);
             }
 
             if (selectedMenuItem == EXIT)
             {
-                gm.drawString("Exit", 250, 140, Color.Aquamarine, 1.0f);
+                gm.drawString("EXIT", 250, 140, Color.Aquamarine, 1.0f);
             }
             else
             {
-                gm.drawString("Exit", 250, 140, Color.Blue, 1.0f);
+                gm.drawString("EXIT", 250, 140, Color.Blue, 1.0f);
             }
         }
 
@@ -651,7 +651,7 @@ namespace TetrisTribute
             gm.drawBoard(gameBoard);
             // call this, passing the gameboard to draw the board
 
-            gm.drawString("Tetris!!", 0, 0, Color.Tomato, 1.0f);
+            gm.drawString("TETRIS", 0, 0, Color.Tomato, 1.0f);
             gm.drawString(score.ToString(), 0, 100, Color.Tomato, 1.0f);
 
             gm.drawPiece(piece.getCurPiece(), 250 + (30 * piece.getCurColumn()), -30 + (30 * piece.getCurRow()));
@@ -668,20 +668,20 @@ namespace TetrisTribute
         {
             
             //TODO set creditsFinished = true when credits are finished
-            gm.drawString("Tetris Tribute", 250, (creditTime / 8) - 1840, Color.Blue, 1.0f);
-            gm.drawString("2009", 290, (creditTime / 8) - 1800, Color.Blue, 1.0f);
+            gm.drawString("TETRIS TRIBUTE", 250, (creditTime / 8) - 1840, Color.Blue, 1.0f);
+            gm.drawNumber("2009", 290, (creditTime / 8) - 1800, Color.Blue, 1.0f);
 
-            gm.drawString("Jason Newbold", 250, (creditTime/8) - 500, Color.Blue, 1.0f);
-            gm.drawString("Game Play Coordinator", 190, (creditTime / 8) - 540, Color.Blue, 1.0f);
+            gm.drawString("JASON NEWBOLD", 250, (creditTime/8) - 500, Color.Blue, 1.0f);
+            gm.drawString("GAME PLAY COORDINATOR", 190, (creditTime / 8) - 540, Color.Blue, 1.0f);
 
-            gm.drawString("Jacob Dutson", 250, (creditTime/8) - 1300, Color.Blue, 1.0f);
-            gm.drawString("Artificial Intelligence", 185, (creditTime/8) -1340, Color.Blue, 1.0f);
+            gm.drawString("JACOB DUTSON", 250, (creditTime/8) - 1300, Color.Blue, 1.0f);
+            gm.drawString("ARTIFICAL INTELLIGENCE", 185, (creditTime/8) -1340, Color.Blue, 1.0f);
 
-            gm.drawString("Dallin Osmun", 250, (creditTime / 8) - 900, Color.Blue, 1.0f);
-            gm.drawString("Graphic Designer", 200, (creditTime / 8) - 940, Color.Blue, 1.0f);
+            gm.drawString("DALLIN OSMUN", 250, (creditTime / 8) - 900, Color.Blue, 1.0f);
+            gm.drawString("GRAPHIC DESIGNER", 200, (creditTime / 8) - 940, Color.Blue, 1.0f);
 
-            gm.drawString("Special Thanks to", 225, (creditTime / 8) -40, Color.Blue, 1.0f);
-            gm.drawString("Dean Mathias", 250, (creditTime / 8), Color.Blue, 1.0f);
+            gm.drawString("SPECIAL THANKS TO", 225, (creditTime / 8) -40, Color.Blue, 1.0f);
+            gm.drawString("DEAN MATHIAS", 250, (creditTime / 8), Color.Blue, 1.0f);
 
         }
 
@@ -691,11 +691,11 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void scoreDraw(GameTime gameTime)
         {
-            gm.drawString("High Scores", 150, 60, Color.Blue, 1.0f);
+            gm.drawString("HIGH SCORES", 150, 60, Color.Blue, 1.0f);
             for (int i = 0; i < 10; i++)
             {
-                gm.drawString((i + 1) + ". " + high.getHighScores()[i][0], 150, (i *50) + 100, Color.Blue, 1.0f);
-                gm.drawString(high.getHighScores()[i][1], 650, (i * 50) + 100, Color.Blue, 1.0f);
+                gm.drawNumber((i + 1) + ". " + high.getHighScores()[i][0], 150, (i *50) + 100, Color.Blue, 0.7f);
+                gm.drawNumber(high.getHighScores()[i][1], 650, (i * 50) + 100, Color.Blue, 0.7f);
             }
 
         }
