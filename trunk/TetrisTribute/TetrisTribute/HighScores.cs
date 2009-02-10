@@ -2,6 +2,7 @@
 //High Scores
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
@@ -16,7 +17,7 @@ namespace TetrisTribute
 
         //file location of the highscores file 
         //TODO NEED TO CHANGE FILEPATH
-        string filePath = "C://Users//Jason//Desktop//HighScores.txt";
+        string filePath = Directory.GetCurrentDirectory() + "//HighScores.txt";
 
         string[][] scores;
         private XmlDocument file;
@@ -48,14 +49,17 @@ namespace TetrisTribute
             //file does not exist use default scores
             catch (System.IO.FileNotFoundException error)
             {
+                Console.WriteLine(error);
                 defaultScores();
             }
             catch (System.IO.DirectoryNotFoundException error)
             {
+                Console.WriteLine(error);
                 defaultScores();
             }
             catch (System.Exception error)
             {
+                Console.WriteLine(error);
                 defaultScores();
             }
 
@@ -64,56 +68,64 @@ namespace TetrisTribute
         //save the high scores to a file
         public void save()
         {
-            file = new XmlDocument();
-            XmlNode docNode = file.CreateXmlDeclaration("1.0", "UTF-8", null);
-            file.AppendChild(docNode);
-
-            XmlNode productsNode = file.CreateElement("HighScores");
-            file.AppendChild(productsNode);
-
-            for (int i = 0; i < 10; i++)
+            try
             {
-                XmlNode productNode = file.CreateElement("player");
-                XmlAttribute productAttribute = file.CreateAttribute("id");
-                productAttribute.Value = i.ToString();
-                productNode.Attributes.Append(productAttribute);
+                file = new XmlDocument();
+                XmlNode docNode = file.CreateXmlDeclaration("1.0", "UTF-8", null);
+                file.AppendChild(docNode);
 
-                productAttribute = file.CreateAttribute("name");
-                productAttribute.Value = scores[i][NAME];
-                productNode.Attributes.Append(productAttribute);
+                XmlNode productsNode = file.CreateElement("HighScores");
+                file.AppendChild(productsNode);
 
-                productAttribute = file.CreateAttribute("score");
-                productAttribute.Value = scores[i][SCORE];
-                productNode.Attributes.Append(productAttribute);
-                productsNode.AppendChild(productNode);
+                for (int i = 0; i < 10; i++)
+                {
+                    XmlNode productNode = file.CreateElement("player");
+                    XmlAttribute productAttribute = file.CreateAttribute("id");
+                    productAttribute.Value = i.ToString();
+                    productNode.Attributes.Append(productAttribute);
+
+                    productAttribute = file.CreateAttribute("name");
+                    productAttribute.Value = scores[i][NAME];
+                    productNode.Attributes.Append(productAttribute);
+
+                    productAttribute = file.CreateAttribute("score");
+                    productAttribute.Value = scores[i][SCORE];
+                    productNode.Attributes.Append(productAttribute);
+                    productsNode.AppendChild(productNode);
+                }
+
+                // Save the document (to the Console window rather than a file).
+                file.Save(filePath);
             }
-
-            // Save the document (to the Console window rather than a file).
-            file.Save(filePath);
+            catch (System.Exception error)
+            {
+                Console.WriteLine(error);
+                //do nothing
+            }
         }
 
         //default scores if the highscore file has not been saved
         private void defaultScores()
         {
-            scores[0][NAME] = "Jason";
+            scores[0][NAME] = "Mario";
             scores[0][SCORE] = "10000";
-            scores[1][NAME] = "Jason2";
+            scores[1][NAME] = "Luigi";
             scores[1][SCORE] = "8000";
-            scores[2][NAME] = "Jason3";
+            scores[2][NAME] = "Toad";
             scores[2][SCORE] = "6000";
-            scores[3][NAME] = "Jason4";
+            scores[3][NAME] = "Peach";
             scores[3][SCORE] = "5000";
-            scores[4][NAME] = "Jason5";
+            scores[4][NAME] = "Wario";
             scores[4][SCORE] = "4100";
-            scores[5][NAME] = "Jason6";
+            scores[5][NAME] = "Yoshi";
             scores[5][SCORE] = "3000";
-            scores[6][NAME] = "Jason7";
+            scores[6][NAME] = "Waluigi";
             scores[6][SCORE] = "2500";
-            scores[7][NAME] = "Jason8";
+            scores[7][NAME] = "Koopa Troopa";
             scores[7][SCORE] = "2000";
-            scores[8][NAME] = "Jason9";
+            scores[8][NAME] = "Donkey Kong";
             scores[8][SCORE] = "1500";
-            scores[9][NAME] = "Jason10";
+            scores[9][NAME] = "Diddy Kong";
             scores[9][SCORE] = "1000";
         }
 
@@ -180,6 +192,17 @@ namespace TetrisTribute
             {
                 //TODO save file.
             }
+        }
+
+        public void clearScore(int rank, int updated)
+        {
+            scores[rank][NAME] = "";
+            scores[rank][SCORE] = updated.ToString();
+        }
+
+        public void updateScore(int rank, string updatedName)
+        {
+            scores[rank][NAME] = updatedName;
         }
 
     }
