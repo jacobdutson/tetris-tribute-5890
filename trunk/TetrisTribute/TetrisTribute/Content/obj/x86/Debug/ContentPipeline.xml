@@ -35,7 +35,16 @@
       <Processor>FontDescriptionProcessor</Processor>
       <Options>None</Options>
       <Output>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\bowellberalta.xnb</Output>
-      <Time>2009-02-09T09:43:25.218125-07:00</Time>
+      <Time>2009-02-09T17:21:50.101-07:00</Time>
+    </Item>
+    <Item>
+      <Source>GameFont.spritefont</Source>
+      <Name>GameFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\GameFont.xnb</Output>
+      <Time>2009-02-09T17:22:14.7885-07:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>

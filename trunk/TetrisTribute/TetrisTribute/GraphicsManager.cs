@@ -24,7 +24,6 @@ namespace TetrisTribute
         SpriteBatch spriteBatch;
         Texture2D blocks;
         SpriteFont afont;
-        SpriteFont anotherfont;
         
         public GraphicsManager(GamePlay game)
         {
@@ -40,8 +39,7 @@ namespace TetrisTribute
 
             // TODO: use this.Content to load your game content here\
             blocks = m_content.Load<Texture2D>(@"Content\blocks2");
-            afont = m_content.Load<SpriteFont>(@"Content\bowellberalta");
-            anotherfont = m_content.Load<SpriteFont>(@"Content\Courier New");
+            afont = m_content.Load<SpriteFont>(@"Content\GameFont");
         }
 
         public void drawPiece(int[][] aPiece, int x, int y)
@@ -68,13 +66,6 @@ namespace TetrisTribute
         {
             spriteBatch.Begin();
             spriteBatch.DrawString(afont, aString, new Vector2(x, y), fontColor, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
-            spriteBatch.End();
-        }
-
-        public void drawNumber(string aString, int x, int y, Color fontColor, float scale)
-        {
-            spriteBatch.Begin();
-            spriteBatch.DrawString(anotherfont, aString, new Vector2(x, y), fontColor, 0.0f, Vector2.Zero, scale, SpriteEffects.None, 0.0f);
             spriteBatch.End();
         }
     }
