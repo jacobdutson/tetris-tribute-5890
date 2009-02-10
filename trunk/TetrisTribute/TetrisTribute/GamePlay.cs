@@ -347,11 +347,20 @@ namespace TetrisTribute
             {
                 // Tell AI player to play the current piece:
                 ai.playCurrentPiece(gameBoard, columnTops, piece.getCurPiece());
-                nextAIInput = ai.getKeyPressed();
+
             }
             catch (Exception err)
             {
                 Console.Out.WriteLine(err.Message);
+            }
+
+            try
+            {
+                nextAIInput = ai.getKeyPressed();
+            }
+            catch (Exception err)
+            {
+                nextAIInput = 0;
             }
 
 
@@ -431,7 +440,14 @@ namespace TetrisTribute
                     clearRows();
 
                     piece.updatePiece();
-                    ai.reset();
+                    try
+                    {
+                        ai.reset();
+                    }
+                    catch (Exception err)
+                    {
+                        Console.WriteLine(err.Message);
+                    }
                     ai.Pause = false;
                     if (!canMove(piece, piece.getCurRow() - 1, piece.getCurColumn(), down))
                     {
