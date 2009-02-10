@@ -32,7 +32,6 @@ namespace TetrisTribute
         private Queue<int> inputsQueue;	    // Stores a queue of keys that the AI has pressed.
         private Piece currentPiece;		    // The current piece to move.
         private Piece movePiece;            // Temporary copy of the current piece, used in the functions that manage movement.
-        private Location moveLocation;      // Temporary copy of the current piece, used in the functions that manage movement.
         private int[,] currentBoard;	    // Keeps a snapshot of the map at the time the piece was dropped.
         private int[] columnTops;           // Array holding the current height of each column in the map.
         private List<Location> locations;	// Stores each location detected in the map to place the piece.
@@ -157,6 +156,8 @@ namespace TetrisTribute
                 // Call function to chose a place on the board to steer the piece to:
             if (!Pause)
             {
+                inputsQueue.Clear();
+
                 findLocation();
             
 
@@ -167,7 +168,10 @@ namespace TetrisTribute
                     //for (int numRotations = 0; numRotations < 4; numRotations++)
                     //{
                         // Could it move?
-                    moveOnce();
+                    if (!moveOnce())
+                    {
+                        break;
+                    }
                         
                      /*   else 
                         {   // NO.  Has it already rotated?
@@ -206,7 +210,7 @@ namespace TetrisTribute
             
 
                 // Add move down signal:
-                for (int speedUpInputCounter = 0; speedUpInputCounter < 100; speedUpInputCounter++)
+                for (int speedUpInputCounter = 0; speedUpInputCounter < 60; speedUpInputCounter++)
                 {
                     inputsQueue.Enqueue(SPEED_UP_KEY_PRESS);
                 }
@@ -279,6 +283,10 @@ namespace TetrisTribute
          */
         public int getKeyPressed()
         {
+            if (inputsQueue.Count == 0)
+            {
+                return 0;
+            }
             return inputsQueue.Dequeue();
         }
 
@@ -353,7 +361,14 @@ namespace TetrisTribute
             index = findLowestLocation();
 
             // Store the location at the index in the locations list into temp:
-            temp = locations.ElementAt<Location>(index);
+            if (index < locations.Count)
+            {
+                temp = locations.ElementAt<Location>(index);
+            }
+            else
+            {
+                throw new Exception("AI Class findLocation method: invalid index into the locations array.");
+            }
 
             // Update the rank on temp:
             temp.Rank += LOWEST_BONUS;
@@ -400,9 +415,13 @@ namespace TetrisTribute
         private int findLowestLocation()
         {
             // Declare local variables:
+            Random randomNumber = new Random();
             int indexOfMax = 0;
+            int[] indicesOfMax = new int[50];
+            int maxIndex = 0;
             int maximumY = 0;
             int currentListMaxY = 0;
+            int tempIndex = 0;
 
             // Loop through the list of locations:
             for (int locationIndex = 0; locationIndex < locations.Count; locationIndex++ )
@@ -414,9 +433,14 @@ namespace TetrisTribute
                 {
                     // If it does set it as the new highest.
                     maximumY = currentListMaxY;
-                    indexOfMax = locationIndex;
+                    indicesOfMax[maxIndex++] = locationIndex;
                 }
             }
+
+            // Generate a random number:
+            tempIndex = randomNumber.Next(0, maxIndex - 1);
+            indexOfMax = indicesOfMax[tempIndex];
+
 
             return indexOfMax;
         }
@@ -597,10 +621,10 @@ namespace TetrisTribute
                     // Search the cells in the game board below the current point:
                     for (int row = currentPoint.Y + 1; row < GAME_BOARD_Y_MAX; row++)
                     {
-                        if (currentPoint.X >= GAME_BOARD_X_MAX)
+                        /*if (currentPoint.X > GAME_BOARD_X_MAX)
                         {
                             throw new Exception("AI Class checkForGaps function found a point with an x value of " + currentPoint.X);
-                        }
+                        }*/
 
                         // Check to see if the space is currently filled:
                         if (currentBoard[row, currentPoint.X] == 0)
