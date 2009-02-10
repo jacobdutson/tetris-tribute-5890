@@ -24,7 +24,7 @@ namespace TetrisTribute
         GraphicsDeviceManager graphics;
         ContentManager m_content;
         SpriteBatch spriteBatch;
-        Texture2D blocks, tetrisbg, menubg;
+        Texture2D blocks, tetrisbg, menubg, defaultbg, creditsbg, highbg;
         SpriteFont afont;
         
         public GraphicsManager(GamePlay game)
@@ -43,7 +43,10 @@ namespace TetrisTribute
             blocks = m_content.Load<Texture2D>(@"Content\blocks2");
             afont = m_content.Load<SpriteFont>(@"Content\GameFont");
             tetrisbg = m_content.Load<Texture2D>(@"Content\TetrisBG");
-            menubg = m_content.Load<Texture2D>(@"Content\MenuBG");
+            menubg = m_content.Load<Texture2D>(@"Content\MenuBg");
+            defaultbg = m_content.Load<Texture2D>(@"Content\arcade84");
+            creditsbg = m_content.Load<Texture2D>(@"Content\creditsbg");
+            highbg = m_content.Load<Texture2D>(@"Content\highScorebg");
         }
 
         public void drawPiece(int[][] aPiece, int x, int y)
@@ -69,6 +72,27 @@ namespace TetrisTribute
         {
             spriteBatch.Begin();
             spriteBatch.Draw(menubg, new Rectangle(0, 0, 800, 600), Color.White);
+            spriteBatch.End();
+        }
+
+        public void drawDefaultBackground()
+        {
+            spriteBatch.Begin();
+            spriteBatch.Draw(defaultbg, new Rectangle(0, 0, 800, 600), Color.White);
+            spriteBatch.End();
+        }
+
+        public void drawCreditsBackground()
+        {
+            spriteBatch.Begin();
+            spriteBatch.Draw(creditsbg, new Rectangle(0, 0, 800, 600), Color.White);
+            spriteBatch.End();
+        }
+
+        public void drawScoreBackground()
+        {
+            spriteBatch.Begin();
+            spriteBatch.Draw(highbg, new Rectangle(0, 0, 800, 600), Color.White);
             spriteBatch.End();
         }
 

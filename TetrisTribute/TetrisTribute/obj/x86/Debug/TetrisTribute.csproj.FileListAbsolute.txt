@@ -40,3 +40,9 @@ C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\Tetr
 C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\drop.xnb
 C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\Tetris music.xnb
 C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\Tetris music.wma
+C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\TetrisBG.xnb
+C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\MenuBG.xnb
+C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\stars.xnb
+C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\arcade84.xnb
+C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\creditsbg.xnb
+C:\Users\Jason\Desktop\USU Spring\CS 5890\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\highScorebg.xnb

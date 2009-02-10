@@ -22,6 +22,7 @@ namespace TetrisTribute
         private string name;
         private bool back;
         private bool space;
+        private bool x;
 
 
         // values that represent the old key state from any input
@@ -34,6 +35,7 @@ namespace TetrisTribute
         private bool oldInputString;
         private bool oldBack;
         private bool oldSpace;
+        private bool oldx;
 
         private char xboxChar;
 
@@ -56,6 +58,7 @@ namespace TetrisTribute
             back = false;
             space = false;
             inputString = false;
+            x = false;
 
             oldUp = false;
             oldDown = false;
@@ -66,6 +69,7 @@ namespace TetrisTribute
             oldBack = false;
             oldSpace = false;
             oldInputString = false;
+            oldx = false;
 
             stringUpdated = false;
         }
@@ -83,6 +87,7 @@ namespace TetrisTribute
             oldInputString = inputString;
             oldBack = back;
             oldSpace = space;
+            oldx = x;
 
             //reset inputs
             up = false;
@@ -94,6 +99,7 @@ namespace TetrisTribute
             back = false;
             space = false;
             inputString = false;
+            x = false;
 
             KeyboardState keyState = Keyboard.GetState();
             GamePadState padState = GamePad.GetState(Microsoft.Xna.Framework.PlayerIndex.One);
@@ -206,13 +212,24 @@ namespace TetrisTribute
                     down = true;
                 }
 
+                if (padState.Buttons.X == ButtonState.Pressed)
+                {
+                    x = true;
+                    if (!oldx)
+                    {
+                        name += xboxChar;
+                    }
+                }
                 //a button will act like enter during menu and rotate during game
                 if (padState.Buttons.A == ButtonState.Pressed)
                 {
                     if (menuControl)
                     {
                         enter = true;
-                        name += xboxChar;
+                        if (name.Length > 0)
+                        {
+                            name = name.Substring(0, name.Length - 1);
+                        }
                     }
                     else
                     {
@@ -228,27 +245,31 @@ namespace TetrisTribute
                     }
                 }
 
-                if (up && xboxChar < 90)
+                if (up && !PreviousUp  && xboxChar < 90)
                 {
                     xboxChar++;
                 }
-                else if (up)
+                else if (up && !PreviousUp)
                 {
                     xboxChar = (char)65;
                 }
 
-                if (down && xboxChar > 65)
+                if (down && !PreviousDown && xboxChar > 65)
                 {
                     xboxChar--;
                 }
-                else if (down)
+                else if (down && !PreviousDown)
                 {
                     xboxChar = (char)90;
                 }
-
+                if (name.Length > 0)
+                {
+                    name = name.Substring(0, name.Length - 1);
+                }
+                name += xboxChar;
             }
 
-
+            
             if (name.Length > 15)
             {
                 name = name.Substring(0, 15);

@@ -101,12 +101,11 @@ namespace TetrisTribute
         protected override void Initialize()
         {
             selectedMenuItem = PLAY;
-            // TODO: Add your initialization logic here
 
-            //TODO set drop speed
+            
             dropTime = 350;
             dropSpeed = 350;
-            idleTime = 1000;
+            idleTime = 5000;
             creditTime = 18000;
             creditsFinished = false;
             score = 0;
@@ -250,21 +249,17 @@ namespace TetrisTribute
         private void menuUpdate(GameTime gameTime)
         {
 
-            //if ((state.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
-            //    || (gamePadState.DPad.Down == ButtonState.Pressed && gamePadState.DPad.Down == ButtonState.Released))
-            if (userInput.Up && !userInput.PreviousUp)
+             if (userInput.Up && !userInput.PreviousUp)
             {
                 //change the selected menu item up one position
-                //??DO we want to wrap the selection if so have an else = 3
                 if (selectedMenuItem > 0)
                 {
-                    idleTime = 30000;
+                    idleTime = 5000;
                     selectedMenuItem--;
                     selection.Play();
                     Console.WriteLine("Selection Changed to " + selectedMenuItem);
                 }
             }
-            //if (state.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down))
             if (userInput.Down && !userInput.PreviousDown)
             {
                 //change selected item down one
@@ -277,10 +272,9 @@ namespace TetrisTribute
                     Console.WriteLine("Selection Changed to " + selectedMenuItem);
                 }
             }
-            //if (state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
             if (userInput.Enter && !userInput.PreviousEnter)
             {
-                idleTime = 30000;
+                idleTime = 5000;
                 //get selected item
                 //change update and draw delegates
                 if (selectedMenuItem == PLAY)
@@ -309,9 +303,7 @@ namespace TetrisTribute
             idleTime = idleTime - gameTime.ElapsedGameTime.Milliseconds;
             if (idleTime < 0)
             {
-                idleTime = 10000;
-
-                //TODO CODE TO START AI
+                idleTime = 5000;
 
                 reset();
                 // Initialize the AI player:
@@ -367,9 +359,6 @@ namespace TetrisTribute
 
             ai.Pause = true;
 
-
-
-
             if (nextAIInput == AI.RIGHT_KEY_PRESS)
             {
                 //move one space to the right
@@ -397,7 +386,6 @@ namespace TetrisTribute
                     piece.rotatePiece();
                     piece.rotatePiece();
                     piece.rotatePiece();
-                    //UNDUE rotate
                 }
             }
 
@@ -460,11 +448,8 @@ namespace TetrisTribute
                     if (!canMove(piece, piece.getCurRow() - 1, piece.getCurColumn(), down))
                     {
                         update = new updateDelegate(menuUpdate);
-                        //draw = new drawDelegate(gameDraw);
-                        //TODO GAME OVER check for high score
+                        draw = new drawDelegate(menuDraw);
                         userInput.setMenuControl(true);
-                        printGame();
-                        int a = 5;
                     }
                     else
                     {
@@ -699,40 +684,46 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void menuDraw(GameTime gameTime)
         {
+            int x = 300;
+            int y = 250;
+            int space = 60;
+
+            gm.drawDefaultBackground();
+
             if (selectedMenuItem == PLAY)
             {
-                gm.drawString("PLAY TETRIS", 250, 20, Color.Aquamarine, 1.0f);
+                gm.drawString("Play Tetris", x, y, Color.Yellow, 1.5f);
             }
             else
             {
-                gm.drawString("PLAY TETRIS", 250, 20, Color.Blue, 1.0f);
+                gm.drawString("Play Tetris", x, y, Color.White, 1.5f);
             }
 
             if (selectedMenuItem == HIGH)
             {
-                gm.drawString("HIGH SCORES", 250, 60, Color.Aquamarine, 1.0f);
+                gm.drawString("High Scores", x, y + (space), Color.Yellow, 1.5f);
             }
             else
             {
-                gm.drawString("HIGH SCORES", 250, 60, Color.Blue, 1.0f);
+                gm.drawString("High Scores", x, y + (space), Color.White, 1.5f);
             }
 
             if (selectedMenuItem == CREDITS)
             {
-                gm.drawString("CREDITS", 250, 100, Color.Aquamarine, 1.0f);
+                gm.drawString("Credits", x, y + (space *2), Color.Yellow, 1.5f);
             }
             else
             {
-                gm.drawString("CREDITS", 250, 100, Color.Blue, 1.0f);
+                gm.drawString("Credits", x, y + (space *2), Color.White, 1.5f);
             }
 
             if (selectedMenuItem == EXIT)
             {
-                gm.drawString("EXIT", 250, 140, Color.Aquamarine, 1.0f);
+                gm.drawString("Exit", x, y + (space *3), Color.Yellow, 1.5f);
             }
             else
             {
-                gm.drawString("EXIT", 250, 140, Color.Blue, 1.0f);
+                gm.drawString("Exit", x, y + (space *3), Color.White, 1.5f);
             }
         }
 
@@ -746,15 +737,15 @@ namespace TetrisTribute
             gm.drawBoard(gameBoard);
             // call this, passing the gameboard to draw the board
 
-            gm.drawString("TETRIS", 0, 0, Color.Tomato, 1.0f);
-            gm.drawString(score.ToString(), 0, 100, Color.Tomato, 1.0f);
-            gm.drawString(level.ToString(), 0, 200, Color.Tomato, 1.0f);
-            gm.drawString(linesCleared.ToString(), 0, 300, Color.Tomato, 1.0f);
+            gm.drawString(score.ToString(), 130, 225, Color.Black, 1.0f);
+            gm.drawString(level.ToString(), 130, 310, Color.Black, 1.0f);
+            gm.drawString(linesCleared.ToString(), 130, 400, Color.Black, 1.0f);
 
             gm.drawPiece(piece.getCurPiece(), 250 + (30 * piece.getCurColumn()), (30 * piece.getCurRow()));
             // call this to draw a piece: aPiece at x and y
+            gm.drawPiece(piece.getNextPiece(), 620, 85);
+            
 
-            // i'll fix this up later, but its a start for testing.
         }
 
         /// <summary>
@@ -763,22 +754,22 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void creditsDraw(GameTime gameTime)
         {
+            gm.drawCreditsBackground();
 
-            //TODO set creditsFinished = true when credits are finished
-            gm.drawString("TETRIS TRIBUTE", 250, (creditTime / 8) - 1840, Color.Blue, 1.0f);
-            gm.drawString("2009", 290, (creditTime / 8) - 1800, Color.Blue, 1.0f);
+            gm.drawString("Tetris Tribute", 290, (creditTime / 8) - 1845, Color.White, 1.0f);
+            gm.drawString("2009", 350, (creditTime / 8) - 1800, Color.White, 1.0f);
 
-            gm.drawString("JASON NEWBOLD", 250, (creditTime / 8) - 500, Color.Blue, 1.0f);
-            gm.drawString("GAME PLAY COORDINATOR", 190, (creditTime / 8) - 540, Color.Blue, 1.0f);
+            gm.drawString("Jason Newbold", 350, (creditTime / 8) - 500, Color.White, 1.0f);
+            gm.drawString("Game Play Coordinator", 290, (creditTime / 8) - 545, Color.White, 1.0f);
 
-            gm.drawString("JACOB DUTSON", 250, (creditTime / 8) - 1300, Color.Blue, 1.0f);
-            gm.drawString("ARTIFICAL INTELLIGENCE", 185, (creditTime / 8) - 1340, Color.Blue, 1.0f);
+            gm.drawString("Jacob Dutson", 350, (creditTime / 8) - 1300, Color.White, 1.0f);
+            gm.drawString("Artificial Intelligence", 290, (creditTime / 8) - 1345, Color.White, 1.0f);
 
-            gm.drawString("DALLIN OSMUN", 250, (creditTime / 8) - 900, Color.Blue, 1.0f);
-            gm.drawString("GRAPHIC DESIGNER", 200, (creditTime / 8) - 940, Color.Blue, 1.0f);
+            gm.drawString("Dallin Osmun", 350, (creditTime / 8) - 900, Color.White, 1.0f);
+            gm.drawString("Graphic Designer", 290, (creditTime / 8) - 945, Color.White, 1.0f);
 
-            gm.drawString("SPECIAL THANKS TO", 225, (creditTime / 8) - 40, Color.Blue, 1.0f);
-            gm.drawString("DEAN MATHIAS", 250, (creditTime / 8), Color.Blue, 1.0f);
+            gm.drawString("Special Thanks To", 290, (creditTime / 8) - 45, Color.White, 1.0f);
+            gm.drawString("Dean Mathias", 350, (creditTime / 8), Color.White, 1.0f);
 
         }
 
@@ -788,20 +779,27 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void scoreDraw(GameTime gameTime)
         {
-            gm.drawString("HIGH SCORES", 150, 60, Color.Blue, 1.0f);
+            gm.drawCreditsBackground();
+
+            gm.drawString("High Scores", 250, 30, Color.White, 1.5f);
             for (int i = 0; i < 10; i++)
             {
                 if (high.getRanking(score) != i)
                 {
-                    gm.drawString((i + 1) + ". " + high.getHighScores()[i][0], 150, (i * 50) + 100, Color.Blue, 0.7f);
-                    gm.drawString(high.getHighScores()[i][1], 650, (i * 50) + 100, Color.Blue, 0.7f);
+                    gm.drawString((i + 1) + ". " + high.getHighScores()[i][0], 100, (i * 50) + 80, Color.White, 1.0f);
+                    gm.drawString(high.getHighScores()[i][1], 600, (i * 50) + 80, Color.White, 1.0f);
                 }
                 else
                 {
-                    gm.drawString((i + 1) + ". " + high.getHighScores()[i][0], 150, (i * 50) + 100, Color.Aquamarine, 0.7f);
-                    gm.drawString(high.getHighScores()[i][1], 650, (i * 50) + 100, Color.Aquamarine, 0.7f);
+                    gm.drawString((i + 1) + ". " + high.getHighScores()[i][0], 100, (i * 50) + 80, Color.Yellow, 1.0f);
+                    gm.drawString(high.getHighScores()[i][1], 600, (i * 50) + 80, Color.Yellow, 1.0f);
                 }
 
+            }
+            GamePadState gamepad = GamePad.GetState(PlayerIndex.One);
+            if (highScore && gamepad.IsConnected)
+            {
+                gm.drawString("Press X to advance letters, Press A when finished.", 150, 560, Color.Aquamarine, 1.0f);
             }
 
         }
@@ -890,12 +888,11 @@ namespace TetrisTribute
 
             int down = (direction + 1) % 2;
 
-            //curRow = curRow - 1;
             for (int i = 0; i < curPiece.getCurPiece().Length; i++)
             {
                 for (int j = 0; j < curPiece.getCurPiece()[i].Length; j++)
                 {
-                    //check if at a wall  ??? what about emtpy bottom row on curpiece
+                    //check if at a wall 
                     if ((curRow + i + down) < 0)
                     {
                         //do nothing

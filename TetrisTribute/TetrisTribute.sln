@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TetrisTribute", "TetrisTribute\TetrisTribute.csproj", "{3B91ACAC-4D77-43F2-9C5E-481981241F40}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xbox 360 Copy (2) of TetrisTribute", "TetrisTribute\Xbox 360 Copy (2) of TetrisTribute.csproj", "{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -29,6 +31,20 @@ Global
 		{4C20845B-A9D5-4341-9479-8C5BAF7AA77E}.Release|Mixed Platforms.ActiveCfg = Release|x86
 		{4C20845B-A9D5-4341-9479-8C5BAF7AA77E}.Release|x86.ActiveCfg = Release|x86
 		{4C20845B-A9D5-4341-9479-8C5BAF7AA77E}.Release|Xbox 360.ActiveCfg = Release|x86
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Debug|Mixed Platforms.ActiveCfg = Debug|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Debug|Mixed Platforms.Build.0 = Debug|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Debug|Mixed Platforms.Deploy.0 = Debug|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Debug|x86.ActiveCfg = Debug|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Debug|Xbox 360.ActiveCfg = Debug|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Debug|Xbox 360.Build.0 = Debug|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Debug|Xbox 360.Deploy.0 = Debug|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Release|Mixed Platforms.ActiveCfg = Release|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Release|Mixed Platforms.Build.0 = Release|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Release|Mixed Platforms.Deploy.0 = Release|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Release|x86.ActiveCfg = Release|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Release|Xbox 360.ActiveCfg = Release|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Release|Xbox 360.Build.0 = Release|Xbox 360
+		{AB906F27-4241-4C78-A2D6-E472C9B3B4F8}.Release|Xbox 360.Deploy.0 = Release|Xbox 360
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
