@@ -158,47 +158,24 @@ namespace TetrisTribute
             {
                 inputsQueue.Clear();
 
-                findLocation();
-            
+                findLocation();                         
 
                 // Check if the current game piece make the next move:
                 while (!atDestination())
                 {
-                    // Loop twice to get both rotations if the piece can't move where it needs to with the first rotation:
-                    //for (int numRotations = 0; numRotations < 4; numRotations++)
-                    //{
-                        // Could it move?
-                    if (!moveOnce())
+                    try
                     {
-                        break;
-                    }
-                        
-                     /*   else 
-                        {   // NO.  Has it already rotated?
-                            if (numRotations != 3)
-                            {
-                                // NO.  Then rotate it and let it try again.
-                                movePiece = rotatePiece(movePiece);
-                                inputsQueue.Enqueue(ROTATE_KEY_PRESS);
-                                chosenLocation.RotateCount--;
-                            }
-                            else
-                            {
-                                /*
-                                // YES.  Reduce the board and let it try finding a new location.
-                                reduceBoard();
-                                needNewLocation = true;
-                            }
+                        // Could it move?
+                        if (!moveOnce())
+                        {
+                            break;
                         }
                     }
-                    /*
-                    // Check if we need a new location before we continue:
-                    if (needNewLocation)
+                    catch (Exception err)
                     {
-                        // Leave this loop and go to the one that finds locations:
-                        break;
-                    }*/
-
+                        Console.Out.WriteLine("AI Class moveOnce method threw an exception: " + err.Message + "\n");
+                    }
+     
                 }
 
                 // Add input signals for the final rotates:
@@ -326,15 +303,35 @@ namespace TetrisTribute
                 // piece to stay on the game board.  Looping starts on the left side of the board:
                 for (int columnCounter = 0; columnCounter <= (GAME_BOARD_X_MAX - pieceWidth); columnCounter++)
                 {
-                    // Call method to set the points in temp to the landing position above the current column:
-                    temp.adjustPointsForLocation(currentPiece, columnCounter, columnTops[columnCounter]);
+
+                    try
+                    {
+
+                        // Call method to set the points in temp to the landing position above the current column:
+                        temp.adjustPointsForLocation(currentPiece, columnCounter, maxOfColumnTops(columnCounter, pieceWidth));
+                    }
+                    catch (Exception err)
+                    {
+                        Console.WriteLine("Location class adjustPointsForLocation method threw an exception: " + err.Message + "\n");
+                    
+                    }
+
+                    try
+                    {
 
                     // Call method to look for open space gaps under the location temp:
                     if (!checkForGaps(temp))
                     {
                         temp.Rank += NO_GAPS_BONUS;
                     }
-                   
+                    
+                    }
+                    catch (Exception err)
+                    {
+                        Console.WriteLine("AI class checkForGaps method threw an exception: " + err.Message + "\n");
+
+                    }
+
                     // Call method to determine how many lines, if any, will be cleared by placing the piece in location temp:
                     temp.Rank += (numLinesCleared(temp) * LINE_CLEAR_BONUS);
 
@@ -358,7 +355,15 @@ namespace TetrisTribute
             }
             
             // Call method to find the lowest location on the game board out of the ones in the locations list:
-            index = findLowestLocation();
+            try{
+
+                index = findLowestLocation();
+            
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("AI class findLowestLocation method threw an exception: " + err.Message + "\n");
+            }
 
             // Store the location at the index in the locations list into temp:
             if (index < locations.Count)
@@ -375,6 +380,24 @@ namespace TetrisTribute
 
             // Choose the location with the best rank to be the AI player's destination choice:
             chooseMaxRankedLocation();
+        }
+
+        private int maxOfColumnTops(int colTop, int width)
+        {
+            // Declare local variables:
+            int max = 19;
+
+            // Loop through each column in the piece and find 
+            // the one with the highest top:
+            for (int colCount = 0; colCount < width; colCount++)
+            {
+                if (columnTops[colTop + colCount] < max)
+                {
+                    max = columnTops[colTop + colCount];
+                }
+            }
+
+            return max;
         }
 
         /**
@@ -429,7 +452,7 @@ namespace TetrisTribute
                 // Check to see if this location has a larger Y (lower value)
                 // than the current largest Y found.
                 currentListMaxY = locations.ElementAt<Location>(locationIndex).MaxY;
-                if (currentListMaxY > maximumY)
+                if (currentListMaxY >= maximumY)
                 {
                     // If it does set it as the new highest.
                     maximumY = currentListMaxY;
