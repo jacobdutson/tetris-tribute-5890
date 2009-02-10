@@ -32,3 +32,4 @@ C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris
 C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.exe
 C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\obj\x86\Debug\TetrisTribute.pdb
 C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\bowellberalta.xnb
+C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\GameFont.xnb
