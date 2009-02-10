@@ -425,7 +425,15 @@ namespace TetrisTribute
                             if (piece.getCurPiece()[i][j] != EMPTY && (piece.getCurRow() + i) < ROWS
                                 && (piece.getCurColumn() + j) < COLUMNS)
                             {
-                                gameBoard[piece.getCurRow() + i][piece.getCurColumn() + j] = piece.getCurPiece()[i][j];
+                                try
+                                {
+
+                                    gameBoard[piece.getCurRow() + i][piece.getCurColumn() + j] = piece.getCurPiece()[i][j];
+                                }
+                                catch (Exception err)
+                                {
+                                    Console.WriteLine(err.Message);
+                                }
 
                                 // Check to see if the top of the column needs to be updated:  
                                 // (It won't if a previous block in this piece has been placed higher up on the board and already set the column top.)
