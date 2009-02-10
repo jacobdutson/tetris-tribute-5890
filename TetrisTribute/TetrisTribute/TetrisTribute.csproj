@@ -94,8 +94,13 @@
     <Compile Include="GamePlay.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SoundFX\beep.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SoundFX\click_x.wav" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png" />
+    <Content Include="SoundFX\selection.wav" />
   </ItemGroup>
   <ItemGroup>
     <NestedContentProject Include="Content\Content.contentproj">

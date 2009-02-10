@@ -22,7 +22,7 @@ namespace TetrisTribute
         //number of rows and columns on game board
         public const int ROWS = 20;
         public const int COLUMNS = 10;
-       
+
         //menu items selections
         public const int PLAY = 0;
         public const int HIGH = 1;
@@ -57,9 +57,11 @@ namespace TetrisTribute
         updateDelegate update;
         drawDelegate draw;
 
+        bool highScore;
+
         //double array that represents the current tetris board
         int[][] gameBoard;
-        int[] columnTops; 
+        int[] columnTops;
         //stores the current user score
         int score;
         //milliseconds remaining till the peice drops
@@ -76,6 +78,11 @@ namespace TetrisTribute
         int selectedMenuItem;
         int level;
         int linesCleared;
+
+        private SoundEffect effect;
+        private SoundEffect clearEffect;
+        private SoundEffect selection;
+
 
         double moveTime;
         public GamePlay()
@@ -95,7 +102,7 @@ namespace TetrisTribute
         {
             selectedMenuItem = PLAY;
             // TODO: Add your initialization logic here
-           
+
             //TODO set drop speed
             dropTime = 350;
             dropSpeed = 350;
@@ -106,6 +113,7 @@ namespace TetrisTribute
             moveTime = 500;
             level = 1;
             linesCleared = 0;
+            highScore = false;
 
 
             update = new updateDelegate(menuUpdate);
@@ -147,8 +155,17 @@ namespace TetrisTribute
             gm.LoadContent(this);
 
             high = new HighScores();
-            piece = new GamePiece();        
-            
+            piece = new GamePiece();
+            gPiece = new GamePiece();
+
+            effect = Content.Load<SoundEffect>("drop");
+            clearEffect = Content.Load<SoundEffect>("slash");
+            selection = Content.Load<SoundEffect>("selection");
+            Song song = Content.Load<Song>("Tetris music");
+            MediaPlayer.Play(song);
+            MediaPlayer.IsRepeating = true;
+
+
             // TODO: use this.Content to load your game content here
         }
 
@@ -175,7 +192,7 @@ namespace TetrisTribute
 
             userInput.updateInput();
 
-            update(gameTime);           
+            update(gameTime);
 
             base.Update(gameTime);
         }
@@ -199,11 +216,14 @@ namespace TetrisTribute
         {
             dropTime = 350;
             dropSpeed = 350;
-            
+
             score = 0;
             moveTime = 500;
 
-            
+            linesCleared = 0;
+            level = 0;
+            pause = false;
+
             for (int i = 0; i < ROWS; i++)
             {
                 for (int j = 0; j < COLUMNS; j++)
@@ -229,22 +249,23 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void menuUpdate(GameTime gameTime)
         {
-             
+
             //if ((state.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
             //    || (gamePadState.DPad.Down == ButtonState.Pressed && gamePadState.DPad.Down == ButtonState.Released))
-            if(userInput.Up  && !userInput.PreviousUp)
-            { 
+            if (userInput.Up && !userInput.PreviousUp)
+            {
                 //change the selected menu item up one position
                 //??DO we want to wrap the selection if so have an else = 3
                 if (selectedMenuItem > 0)
                 {
                     idleTime = 30000;
                     selectedMenuItem--;
+                    selection.Play();
                     Console.WriteLine("Selection Changed to " + selectedMenuItem);
                 }
             }
             //if (state.IsKeyDown(Keys.Down) && !oldState.IsKeyDown(Keys.Down))
-            if(userInput.down && !userInput.PreviousDown)
+            if (userInput.Down && !userInput.PreviousDown)
             {
                 //change selected item down one
                 //??DO we want to wrap the selection if so have an else = 0
@@ -252,11 +273,12 @@ namespace TetrisTribute
                 {
                     idleTime = 30000;
                     selectedMenuItem++;
+                    selection.Play();
                     Console.WriteLine("Selection Changed to " + selectedMenuItem);
                 }
             }
             //if (state.IsKeyDown(Keys.Enter) && !oldState.IsKeyDown(Keys.Enter))
-            if(userInput.Enter && !userInput.PreviousEnter)
+            if (userInput.Enter && !userInput.PreviousEnter)
             {
                 idleTime = 30000;
                 //get selected item
@@ -287,8 +309,8 @@ namespace TetrisTribute
             idleTime = idleTime - gameTime.ElapsedGameTime.Milliseconds;
             if (idleTime < 0)
             {
-                idleTime = 30000;
-                
+                idleTime = 10000;
+
                 //TODO CODE TO START AI
 
                 reset();
@@ -301,6 +323,7 @@ namespace TetrisTribute
             }
         }
 
+        bool pause;
         /// <summary>
         /// Allows the game to run logic needed for the game being played
         /// </summary>
@@ -332,178 +355,35 @@ namespace TetrisTribute
             }
 
 
-            
+
             ai.Pause = true;
-            
 
-            
 
-                    if (nextAIInput == AI.RIGHT_KEY_PRESS)
-                    {
-                        //move one space to the right
-                        if (canMove(piece.getCurRow(), piece.getCurColumn(), right))
-                        {
-                            piece.setCurColumn(piece.getCurColumn() + right);
-                        }
-                    }
 
-                    if (nextAIInput == AI.LEFT_KEY_PRESS)
-                    {
-                        //move one space to the Left
-                        if (canMove(piece.getCurRow(), piece.getCurColumn(), left))
-                        {
-                            piece.setCurColumn(piece.getCurColumn() + left);
-                        }
-                    }
 
-                    if (nextAIInput == AI.ROTATE_KEY_PRESS)
-                    {
-                        //move one space to the Left
-                        piece.rotatePiece();
-                        if (!canMove(piece.getCurRow() + 1, piece.getCurColumn(), down))
-                        {
-                            piece.rotatePiece();
-                            piece.rotatePiece();
-                            piece.rotatePiece();
-                            //UNDUE rotate
-                        }
-                    }
-
-                    if (nextAIInput == AI.SPEED_UP_KEY_PRESS)
-                    {
-                        //get time and move Left accordingly
-                        int mult = 8;
-                        dropTime = dropTime - (gameTime.ElapsedGameTime.Milliseconds * mult);
-                    }
-
-            
-                    dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
-                    if (dropTime < 0)
-                    {
-                        if (canMove(piece.getCurRow(), piece.getCurColumn(), down))
-                        {
-                            piece.setCurRow(piece.getCurRow() + 1);
-                        }
-                        else
-                        {
-                            for (int i = 0; i < piece.getCurPiece().Length; i++)
-                            {
-                                for (int j = 0; j < piece.getCurPiece().Length; j++)
-                                {
-                                    if (piece.getCurPiece()[i][j] != EMPTY && (piece.getCurRow() + i) < ROWS
-                                        && (piece.getCurColumn() + j) < COLUMNS)
-                                    {
-                                        gameBoard[piece.getCurRow() + i][piece.getCurColumn() + j] = piece.getCurPiece()[i][j];
-
-                                        // Check to see if the top of the column needs to be updated:  
-                                        // (It won't if a previous block in this piece has been placed higher up on the board and already set the column top.)
-                                        if (columnTops[piece.getCurColumn() + j] >= piece.getCurRow() + i - 1)
-                                        {
-                                            columnTops[piece.getCurColumn() + j] = piece.getCurRow() + i - 1;
-                                        }
-                                    }
-                                }
-                            }
-
-                            clearRows();
-
-                            piece.updatePiece();
-                            ai.reset();
-                            ai.Pause = false;
-                            if (!canMove(piece.getCurRow() - 1, piece.getCurColumn(), down))
-                            {
-                                update = new updateDelegate(menuUpdate);
-                                //draw = new drawDelegate(gameDraw);
-                                //TODO GAME OVER check for high score
-                                userInput.setMenuControl(true);
-                                printGame();
-                                int a = 5;
-                            }
-                            else
-                            {
-                                score += 10;
-                            }
-                        }
-                        dropTime = dropSpeed;
-
-                }
-                
-            
-        }
-
-        /// <summary>
-        /// Allows the game to run logic needed for the game being played
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        private void gameUpdate(GameTime gameTime)
-        {
-            KeyboardState state = Keyboard.GetState();
-            bool slide = false;
-
-            int right = 1;
-            int down = 0;
-            int left = -1;
-
-            //if (state.IsKeyDown(Keys.Right) && !oldState.IsKeyDown(Keys.Right))
-            if(userInput.Right && !userInput.PreviousRight)
+            if (nextAIInput == AI.RIGHT_KEY_PRESS)
             {
                 //move one space to the right
-                if (canMove(piece.getCurRow(), piece.getCurColumn(), right))
+                if (canMove(piece, piece.getCurRow(), piece.getCurColumn(), right))
                 {
                     piece.setCurColumn(piece.getCurColumn() + right);
                 }
             }
 
-            //if (state.IsKeyDown(Keys.Right) && oldState.IsKeyDown(Keys.Right))
-            if(userInput.Right && userInput.PreviousRight)
-            {
-                slide = true;
-                //get time and move right accordingly
-                moveTime = moveTime - gameTime.ElapsedGameTime.Milliseconds;
-                if (moveTime < 0)
-                {
-                    //move one space to the right
-                    if (canMove(piece.getCurRow(), piece.getCurColumn(), right))
-                    {
-                        piece.setCurColumn(piece.getCurColumn() + right);
-                    }
-                    moveTime = 75;
-                }
-            }
-
-           // if (state.IsKeyDown(Keys.Left) && !oldState.IsKeyDown(Keys.Left))
-            if( userInput.Left && !userInput.PreviousLeft)
+            if (nextAIInput == AI.LEFT_KEY_PRESS)
             {
                 //move one space to the Left
-                if (canMove(piece.getCurRow(), piece.getCurColumn(), left))
+                if (canMove(piece, piece.getCurRow(), piece.getCurColumn(), left))
                 {
                     piece.setCurColumn(piece.getCurColumn() + left);
                 }
             }
 
-            //if (state.IsKeyDown(Keys.Left) && oldState.IsKeyDown(Keys.Left))
-            if(userInput.Left && userInput.PreviousLeft)
-            {
-                slide = true;
-                //get time and move Left accordingly
-                moveTime = moveTime - gameTime.ElapsedGameTime.Milliseconds;
-                if (moveTime < 0)
-                {
-                    //move one space to the right
-                    if (canMove(piece.getCurRow(), piece.getCurColumn(), left))
-                    {
-                        piece.setCurColumn(piece.getCurColumn() + left);
-                    }
-                    moveTime = 75;
-                }
-            }
-
-            //if (state.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
-            if(userInput.Up && !userInput.PreviousUp)
+            if (nextAIInput == AI.ROTATE_KEY_PRESS)
             {
                 //move one space to the Left
                 piece.rotatePiece();
-                if (!canMove(piece.getCurRow() - 1, piece.getCurColumn(), down))
+                if (!canMove(piece, piece.getCurRow() + 1, piece.getCurColumn(), down))
                 {
                     piece.rotatePiece();
                     piece.rotatePiece();
@@ -512,28 +392,18 @@ namespace TetrisTribute
                 }
             }
 
-            //if (state.IsKeyDown(Keys.Up) && oldState.IsKeyDown(Keys.Up))
-            if(userInput.Up && userInput.PreviousUp)
-            {
-                //get time and move Left accordingly
-            }
-
-            //if (state.IsKeyDown(Keys.Down))
-            if(userInput.Down)
+            if (nextAIInput == AI.SPEED_UP_KEY_PRESS)
             {
                 //get time and move Left accordingly
                 int mult = 8;
                 dropTime = dropTime - (gameTime.ElapsedGameTime.Milliseconds * mult);
             }
-            if (!slide)
-            {
-                moveTime = 300;
-            }
-            dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
 
+
+            dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
             if (dropTime < 0)
             {
-                if (canMove(piece.getCurRow(), piece.getCurColumn(), down))
+                if (canMove(piece, piece.getCurRow(), piece.getCurColumn(), down))
                 {
                     piece.setCurRow(piece.getCurRow() + 1);
                 }
@@ -559,9 +429,11 @@ namespace TetrisTribute
                     }
 
                     clearRows();
-                    
+
                     piece.updatePiece();
-                    if (!canMove(piece.getCurRow() - 1, piece.getCurColumn(), down))
+                    ai.reset();
+                    ai.Pause = false;
+                    if (!canMove(piece, piece.getCurRow() - 1, piece.getCurColumn(), down))
                     {
                         update = new updateDelegate(menuUpdate);
                         //draw = new drawDelegate(gameDraw);
@@ -576,8 +448,177 @@ namespace TetrisTribute
                     }
                 }
                 dropTime = dropSpeed;
+
             }
 
+
+        }
+
+        /// <summary>
+        /// Allows the game to run logic needed for the game being played
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        private void gameUpdate(GameTime gameTime)
+        {
+            if (userInput.Pause && !userInput.PreviousPause)
+            {
+                if (pause)
+                {
+                    pause = false;
+                }
+                else
+                {
+                    pause = true;
+                }
+            }
+            if (!pause)
+            {
+                KeyboardState state = Keyboard.GetState();
+                bool slide = false;
+
+                int right = 1;
+                int down = 0;
+                int left = -1;
+
+                //if (state.IsKeyDown(Keys.Right) && !oldState.IsKeyDown(Keys.Right))
+                if (userInput.Right && !userInput.PreviousRight)
+                {
+                    //move one space to the right
+                    if (canMove(piece, piece.getCurRow(), piece.getCurColumn(), right))
+                    {
+                        piece.setCurColumn(piece.getCurColumn() + right);
+                    }
+                }
+
+                //if (state.IsKeyDown(Keys.Right) && oldState.IsKeyDown(Keys.Right))
+                if (userInput.Right && userInput.PreviousRight)
+                {
+                    slide = true;
+                    //get time and move right accordingly
+                    moveTime = moveTime - gameTime.ElapsedGameTime.Milliseconds;
+                    if (moveTime < 0)
+                    {
+                        //move one space to the right
+                        if (canMove(piece, piece.getCurRow(), piece.getCurColumn(), right))
+                        {
+                            piece.setCurColumn(piece.getCurColumn() + right);
+                        }
+                        moveTime = 75;
+                    }
+                }
+
+                // if (state.IsKeyDown(Keys.Left) && !oldState.IsKeyDown(Keys.Left))
+                if (userInput.Left && !userInput.PreviousLeft)
+                {
+                    //move one space to the Left
+                    if (canMove(piece, piece.getCurRow(), piece.getCurColumn(), left))
+                    {
+                        piece.setCurColumn(piece.getCurColumn() + left);
+                    }
+                }
+
+                //if (state.IsKeyDown(Keys.Left) && oldState.IsKeyDown(Keys.Left))
+                if (userInput.Left && userInput.PreviousLeft)
+                {
+                    slide = true;
+                    //get time and move Left accordingly
+                    moveTime = moveTime - gameTime.ElapsedGameTime.Milliseconds;
+                    if (moveTime < 0)
+                    {
+                        //move one space to the right
+                        if (canMove(piece, piece.getCurRow(), piece.getCurColumn(), left))
+                        {
+                            piece.setCurColumn(piece.getCurColumn() + left);
+                        }
+                        moveTime = 75;
+                    }
+                }
+
+                //if (state.IsKeyDown(Keys.Up) && !oldState.IsKeyDown(Keys.Up))
+                if (userInput.Up && !userInput.PreviousUp)
+                {
+                    //move one space to the Left
+                    piece.rotatePiece();
+                    if (!canMove(piece, piece.getCurRow() - 1, piece.getCurColumn(), down))
+                    {
+                        //undo rotate
+                        piece.rotatePiece();
+                        piece.rotatePiece();
+                        piece.rotatePiece();
+                    }
+                }
+
+                if (userInput.Up && userInput.PreviousUp)
+                {
+                    //get time and move Left accordingly
+                }
+
+                if (userInput.Down)
+                {
+                    //get time and move Left accordingly
+                    int mult = 8;
+                    dropTime = dropTime - (gameTime.ElapsedGameTime.Milliseconds * mult);
+                }
+
+                if (!slide)
+                {
+                    moveTime = 300;
+                }
+                dropTime = dropTime - gameTime.ElapsedGameTime.Milliseconds;
+
+                if (dropTime < 0)
+                {
+                    if (canMove(piece, piece.getCurRow(), piece.getCurColumn(), down))
+                    {
+                        piece.setCurRow(piece.getCurRow() + 1);
+                    }
+                    else
+                    {
+                        effect.Play(1.0f);
+                        for (int i = 0; i < piece.getCurPiece().Length; i++)
+                        {
+                            for (int j = 0; j < piece.getCurPiece().Length; j++)
+                            {
+                                if (piece.getCurPiece()[i][j] != EMPTY && (piece.getCurRow() + i) < ROWS
+                                    && (piece.getCurRow() + i) > 0 && (piece.getCurColumn() + j) < COLUMNS)
+                                {
+                                    gameBoard[piece.getCurRow() + i][piece.getCurColumn() + j] = piece.getCurPiece()[i][j];
+                                }
+
+                            }
+                        }
+
+                        clearRows();
+
+                        piece.updatePiece();
+                        if (!canMove(piece, piece.getCurRow() - 1, piece.getCurColumn(), down))
+                        {
+                            userInput.setMenuControl(true);
+                            update = new updateDelegate(scoresUpdate);
+                            if (high.getRanking(score) != -1)
+                            {
+                                //new high score
+                                highScore = true;
+                                string[] updatedScore = new string[2];
+                                updatedScore[0] = "";
+                                updatedScore[1] = score.ToString();
+                                high.upDateScores(updatedScore);
+                                userInput.clearName();
+                            }
+                            else
+                            {
+                                highScore = false;
+                            }
+
+                        }
+                        else
+                        {
+                            score += 10;
+                        }
+                    }
+                    dropTime = dropSpeed;
+                }
+            }
         }
 
         /// <summary>
@@ -587,16 +628,16 @@ namespace TetrisTribute
         private void creditsUpdate(GameTime gameTime)
         {
             KeyboardState state = Keyboard.GetState();
-            
+
             //TODO Escape key or any key???
-            if((userInput.Enter && !userInput.PreviousEnter) || creditsFinished)
+            if ((userInput.Enter && !userInput.PreviousEnter) || creditsFinished)
             {
                 creditTime = 18000;
                 creditsFinished = false;
                 update = new updateDelegate(menuUpdate);
                 draw = new drawDelegate(menuDraw);
             }
-            creditTime = creditTime - gameTime.ElapsedGameTime.Milliseconds;            if (creditTime < 0)            {                creditsFinished = true;            }
+            creditTime = creditTime - gameTime.ElapsedGameTime.Milliseconds; if (creditTime < 0) { creditsFinished = true; }
         }
 
         /// <summary>
@@ -605,10 +646,18 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void scoresUpdate(GameTime gameTime)
         {
-            bool h = false;
-            if (h)
+            draw = new drawDelegate(scoreDraw);
+            if (highScore)
             {
-                //get high score input
+                if (userInput.Enter && !userInput.PreviousEnter)
+                {
+                    highScore = false;
+                    effect.Play();
+                    high.save();
+                }
+
+                high.updateScore(high.getRanking(score), userInput.Name);
+
             }
             else
             {
@@ -628,38 +677,38 @@ namespace TetrisTribute
         {
             if (selectedMenuItem == PLAY)
             {
-                gm.drawString("Play Tetris", 250, 20, Color.Aquamarine, 1.0f);
+                gm.drawString("PLAY TETRIS", 250, 20, Color.Aquamarine, 1.0f);
             }
             else
             {
-                gm.drawString("Play Tetris", 250, 20, Color.Blue, 1.0f);
+                gm.drawString("PLAY TETRIS", 250, 20, Color.Blue, 1.0f);
             }
 
             if (selectedMenuItem == HIGH)
             {
-                gm.drawString("High Scores", 250, 60, Color.Aquamarine, 1.0f);
+                gm.drawString("HIGH SCORES", 250, 60, Color.Aquamarine, 1.0f);
             }
             else
             {
-                gm.drawString("High Scores", 250, 60, Color.Blue, 1.0f);
+                gm.drawString("HIGH SCORES", 250, 60, Color.Blue, 1.0f);
             }
 
             if (selectedMenuItem == CREDITS)
             {
-                gm.drawString("Credits", 250, 100, Color.Aquamarine, 1.0f);
+                gm.drawString("CREDITS", 250, 100, Color.Aquamarine, 1.0f);
             }
             else
             {
-                gm.drawString("Credits", 250, 100, Color.Blue, 1.0f);
+                gm.drawString("CREDITS", 250, 100, Color.Blue, 1.0f);
             }
 
             if (selectedMenuItem == EXIT)
             {
-                gm.drawString("Exit", 250, 140, Color.Aquamarine, 1.0f);
+                gm.drawString("EXIT", 250, 140, Color.Aquamarine, 1.0f);
             }
             else
             {
-                gm.drawString("Exit", 250, 140, Color.Blue, 1.0f);
+                gm.drawString("EXIT", 250, 140, Color.Blue, 1.0f);
             }
         }
 
@@ -675,8 +724,10 @@ namespace TetrisTribute
 
             gm.drawString("TETRIS", 0, 0, Color.Tomato, 1.0f);
             gm.drawString(score.ToString(), 0, 100, Color.Tomato, 1.0f);
+            gm.drawString(level.ToString(), 0, 200, Color.Tomato, 1.0f);
+            gm.drawString(linesCleared.ToString(), 0, 300, Color.Tomato, 1.0f);
 
-            gm.drawPiece(piece.getCurPiece(), 250 + (30 * piece.getCurColumn()), -30 + (30 * piece.getCurRow()));
+            gm.drawPiece(piece.getCurPiece(), 250 + (30 * piece.getCurColumn()), (30 * piece.getCurRow()));
             // call this to draw a piece: aPiece at x and y
 
             // i'll fix this up later, but its a start for testing.
@@ -688,22 +739,22 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void creditsDraw(GameTime gameTime)
         {
-            
+
             //TODO set creditsFinished = true when credits are finished
-            gm.drawString("Tetris Tribute", 250, (creditTime / 8) - 1840, Color.Blue, 1.0f);
+            gm.drawString("TETRIS TRIBUTE", 250, (creditTime / 8) - 1840, Color.Blue, 1.0f);
             gm.drawString("2009", 290, (creditTime / 8) - 1800, Color.Blue, 1.0f);
 
-            gm.drawString("Jason Newbold", 250, (creditTime/8) - 500, Color.Blue, 1.0f);
-            gm.drawString("Game Play Coordinator", 190, (creditTime / 8) - 540, Color.Blue, 1.0f);
+            gm.drawString("JASON NEWBOLD", 250, (creditTime / 8) - 500, Color.Blue, 1.0f);
+            gm.drawString("GAME PLAY COORDINATOR", 190, (creditTime / 8) - 540, Color.Blue, 1.0f);
 
-            gm.drawString("Jacob Dutson", 250, (creditTime/8) - 1300, Color.Blue, 1.0f);
-            gm.drawString("Artificial Intelligence", 185, (creditTime/8) -1340, Color.Blue, 1.0f);
+            gm.drawString("JACOB DUTSON", 250, (creditTime / 8) - 1300, Color.Blue, 1.0f);
+            gm.drawString("ARTIFICAL INTELLIGENCE", 185, (creditTime / 8) - 1340, Color.Blue, 1.0f);
 
-            gm.drawString("Dallin Osmun", 250, (creditTime / 8) - 900, Color.Blue, 1.0f);
-            gm.drawString("Graphic Designer", 200, (creditTime / 8) - 940, Color.Blue, 1.0f);
+            gm.drawString("DALLIN OSMUN", 250, (creditTime / 8) - 900, Color.Blue, 1.0f);
+            gm.drawString("GRAPHIC DESIGNER", 200, (creditTime / 8) - 940, Color.Blue, 1.0f);
 
-            gm.drawString("Special Thanks To", 225, (creditTime / 8) -40, Color.Blue, 1.0f);
-            gm.drawString("Dean Mathias", 250, (creditTime / 8), Color.Blue, 1.0f);
+            gm.drawString("SPECIAL THANKS TO", 225, (creditTime / 8) - 40, Color.Blue, 1.0f);
+            gm.drawString("DEAN MATHIAS", 250, (creditTime / 8), Color.Blue, 1.0f);
 
         }
 
@@ -713,11 +764,20 @@ namespace TetrisTribute
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         private void scoreDraw(GameTime gameTime)
         {
-            gm.drawString("High Scores", 150, 60, Color.Blue, 1.0f);
+            gm.drawString("HIGH SCORES", 150, 60, Color.Blue, 1.0f);
             for (int i = 0; i < 10; i++)
             {
-                gm.drawString((i + 1) + ". " + high.getHighScores()[i][0], 150, (i *50) + 100, Color.Blue, 0.7f);
-                gm.drawString(high.getHighScores()[i][1], 650, (i * 50) + 100, Color.Blue, 0.7f);
+                if (high.getRanking(score) != i)
+                {
+                    gm.drawString((i + 1) + ". " + high.getHighScores()[i][0], 150, (i * 50) + 100, Color.Blue, 0.7f);
+                    gm.drawString(high.getHighScores()[i][1], 650, (i * 50) + 100, Color.Blue, 0.7f);
+                }
+                else
+                {
+                    gm.drawString((i + 1) + ". " + high.getHighScores()[i][0], 150, (i * 50) + 100, Color.Aquamarine, 0.7f);
+                    gm.drawString(high.getHighScores()[i][1], 650, (i * 50) + 100, Color.Aquamarine, 0.7f);
+                }
+
             }
 
         }
@@ -739,6 +799,7 @@ namespace TetrisTribute
 
         private void clearRows()
         {
+            bool cleared = false;
             int clearScore = 0;
             for (int i = 0; i < ROWS; i++)
             {
@@ -752,6 +813,7 @@ namespace TetrisTribute
                 }
                 if (clear)
                 {
+                    cleared = true;
                     if (clearScore != 0)
                     {
                         clearScore = clearScore * 2;
@@ -761,10 +823,10 @@ namespace TetrisTribute
                         clearScore = 100;
                     }
                     linesCleared++;
-                    if (linesCleared % 10 == 0 && linesCleared<=100)
+                    if (linesCleared % 10 == 0 && linesCleared <= 100)
                     {
                         level++;
-                        dropSpeed =  dropSpeed - 25;
+                        dropSpeed = dropSpeed - 25;
                     }
                     for (int k = i; k > 0 && clear; k--)
                     {
@@ -780,28 +842,49 @@ namespace TetrisTribute
                 }
             }
             score += clearScore;
+
+            if (cleared)
+            {
+                clearEffect.Play();
+                gravityBoard = new int[ROWS][];
+                for (int i = 0; i < ROWS; i++)
+                {
+                    gravityBoard[i] = new int[COLUMNS];
+                }
+                for (int i = 0; i < COLUMNS; i++)
+                {
+                    gravity((ROWS - 1), i);
+                }
+                compareGravity();
+            }
         }
 
-        public bool canMove(int curRow, int curColumn, int direction)
+
+        private bool canMove(GamePiece curPiece, int curRow, int curColumn, int direction)
         {
             //direction  -1 left,  0 down,  1 right
 
             int down = (direction + 1) % 2;
 
-            for (int i = 0; i < piece.getCurPiece().Length; i++)
+            //curRow = curRow - 1;
+            for (int i = 0; i < curPiece.getCurPiece().Length; i++)
             {
-                for (int j = 0; j < piece.getCurPiece().Length; j++)
+                for (int j = 0; j < curPiece.getCurPiece()[i].Length; j++)
                 {
                     //check if at a wall  ??? what about emtpy bottom row on curpiece
-                    if ((curRow + i + down) >= ROWS || (curColumn + j + direction) >= COLUMNS || (curColumn + j + direction) < 0)
+                    if ((curRow + i + down) < 0)
                     {
-                        if (piece.getCurPiece()[i][j] != EMPTY)
+                        //do nothing
+                    }
+                    else if ((curRow + i + down) >= ROWS || (curColumn + j + direction) >= COLUMNS || (curColumn + j + direction) < 0)
+                    {
+                        if (curPiece.getCurPiece()[i][j] != EMPTY)
                         {
                             return false;
                         }
 
                     }
-                    else if (gameBoard[curRow + i + down][curColumn + j + direction] != EMPTY && piece.getCurPiece()[i][j] != EMPTY)
+                    else if (gameBoard[curRow + i + down][curColumn + j + direction] != EMPTY && curPiece.getCurPiece()[i][j] != EMPTY)
                     {
                         return false;
                     }
@@ -811,5 +894,78 @@ namespace TetrisTribute
             return true;
         }
 
+        int[][] gravityBoard;
+
+        private void gravity(int curRow, int curColumn)
+        {
+            if (curRow >= 0 && curRow < ROWS && curColumn >= 0 && curColumn < COLUMNS)
+            {
+                if (gameBoard[curRow][curColumn] != EMPTY && gravityBoard[curRow][curColumn] != 1)
+                {
+                    gravityBoard[curRow][curColumn] = 1;
+
+                    gravity(curRow - 1, curColumn);
+                    gravity(curRow + 1, curColumn);
+                    gravity(curRow, curColumn + 1);
+                    gravity(curRow, curColumn - 1);
+                }
+            }
+        }
+
+        int[][] gravityPiece;
+        GamePiece gPiece;
+
+        private void compareGravity()
+        {
+            bool drop = false;
+            gravityPiece = new int[ROWS][];
+            for (int i = 0; i < ROWS; i++)
+            {
+                gravityPiece[i] = new int[COLUMNS];
+                for (int j = 0; j < COLUMNS; j++)
+                {
+                    gravityPiece[i][j] = 0;
+                }
+            }
+            for (int i = (ROWS - 1); i >= 0; i--)
+            {
+                for (int j = 0; j < COLUMNS; j++)
+                {
+                    if (gameBoard[i][j] != EMPTY && gravityBoard[i][j] == EMPTY)
+                    {
+                        drop = true;
+                        //drop peice
+                        gravityPiece[i][j] = gameBoard[i][j];
+                        gameBoard[i][j] = 0;
+                    }
+                }
+            }
+            if (drop)
+            {
+                gPiece.setCurPiece(gravityPiece);
+                gPiece.setCurRow(0);
+                gPiece.setCurColumn(0);
+
+                while (canMove(gPiece, gPiece.getCurRow(), gPiece.getCurColumn(), 0))
+                {
+                    gPiece.setCurRow(gPiece.getCurRow() + 1);
+                }
+
+
+                for (int i = 0; i < gPiece.getCurPiece().Length; i++)
+                {
+                    for (int j = 0; j < gPiece.getCurPiece()[i].Length; j++)
+                    {
+                        if (gPiece.getCurPiece()[i][j] != EMPTY && (gPiece.getCurRow() + i) < ROWS
+                            && (gPiece.getCurColumn() + j) < COLUMNS)
+                        {
+                            gameBoard[gPiece.getCurRow() + i][gPiece.getCurColumn() + j] = gPiece.getCurPiece()[i][j];
+                        }
+                    }
+                }
+                clearRows();
+
+            }
+        }
     }
 }
