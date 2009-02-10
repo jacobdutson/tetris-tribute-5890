@@ -17,7 +17,7 @@ namespace TetrisTribute
 
         //file location of the highscores file 
         //TODO NEED TO CHANGE FILEPATH
-        string filePath = Directory.GetCurrentDirectory() + "//HighScores.txt";
+        string filePath = "";//Directory.GetCurrentDirectory() + "//HighScores.txt";
 
         string[][] scores;
         private XmlDocument file;
@@ -126,7 +126,7 @@ namespace TetrisTribute
             scores[8][NAME] = "Donkey Kong";
             scores[8][SCORE] = "1500";
             scores[9][NAME] = "Diddy Kong";
-            scores[9][SCORE] = "1000";
+            scores[9][SCORE] = "50";
         }
 
         //returns high scores
