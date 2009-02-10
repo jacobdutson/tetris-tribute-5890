@@ -18,11 +18,13 @@ namespace TetrisTribute
     class GraphicsManager
     {
         const int TILESIZE = 30;
+        const int WIDTH = 800;
+        const int HEIGHT = 600;
 
         GraphicsDeviceManager graphics;
         ContentManager m_content;
         SpriteBatch spriteBatch;
-        Texture2D blocks;
+        Texture2D blocks, tetrisbg, menubg;
         SpriteFont afont;
         
         public GraphicsManager(GamePlay game)
@@ -40,6 +42,8 @@ namespace TetrisTribute
             // TODO: use this.Content to load your game content here\
             blocks = m_content.Load<Texture2D>(@"Content\blocks2");
             afont = m_content.Load<SpriteFont>(@"Content\GameFont");
+            tetrisbg = m_content.Load<Texture2D>(@"Content\TetrisBG");
+            menubg = m_content.Load<Texture2D>(@"Content\MenuBG");
         }
 
         public void drawPiece(int[][] aPiece, int x, int y)
@@ -56,10 +60,16 @@ namespace TetrisTribute
         public void drawBoard(int[][] gameboard)
         {
             spriteBatch.Begin();
-            spriteBatch.Draw(blocks, new Rectangle(0, 0, (400 - TILESIZE * 5), 600), new Rectangle(0, 0, TILESIZE, TILESIZE), Color.White);
-            spriteBatch.Draw(blocks, new Rectangle((400 + TILESIZE * 5), 0, (400 - TILESIZE * 5), 600), new Rectangle(0, 0, TILESIZE, TILESIZE), Color.White);
+            spriteBatch.Draw(tetrisbg, new Rectangle(0, 0, 800, 600), Color.White);
             spriteBatch.End();
-            drawPiece(gameboard, (400 - TILESIZE * 5), 0);
+            drawPiece(gameboard, (WIDTH / 2 - TILESIZE * 5), 0);
+        }
+
+        public void drawMenuBackground()
+        {
+            spriteBatch.Begin();
+            spriteBatch.Draw(menubg, new Rectangle(0, 0, 800, 600), Color.White);
+            spriteBatch.End();
         }
 
         public void drawString(string aString, int x, int y, Color fontColor, float scale)

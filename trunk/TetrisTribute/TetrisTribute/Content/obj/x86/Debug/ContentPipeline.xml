@@ -20,24 +20,6 @@
       <Time>2009-02-09T09:11:41.186625-07:00</Time>
     </Item>
     <Item>
-      <Source>Courier New.spritefont</Source>
-      <Name>Courier New</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\Courier New.xnb</Output>
-      <Time>2009-02-09T09:11:41.186625-07:00</Time>
-    </Item>
-    <Item>
-      <Source>bowellberalta.spritefont</Source>
-      <Name>bowellberalta</Name>
-      <Importer>FontDescriptionImporter</Importer>
-      <Processor>FontDescriptionProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\bowellberalta.xnb</Output>
-      <Time>2009-02-09T17:21:50.101-07:00</Time>
-    </Item>
-    <Item>
       <Source>GameFont.spritefont</Source>
       <Name>GameFont</Name>
       <Importer>FontDescriptionImporter</Importer>
@@ -45,6 +27,24 @@
       <Options>None</Options>
       <Output>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\GameFont.xnb</Output>
       <Time>2009-02-09T17:22:14.7885-07:00</Time>
+    </Item>
+    <Item>
+      <Source>TetrisBG.png</Source>
+      <Name>TetrisBG</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\TetrisBG.xnb</Output>
+      <Time>2009-02-09T18:53:18-07:00</Time>
+    </Item>
+    <Item>
+      <Source>MenuBG.png</Source>
+      <Name>MenuBG</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+      <Options>None</Options>
+      <Output>C:\Documents and Settings\Dallin\My Documents\Visual Studio 2008\Projects\Tetris\tetris-tribute-5890\TetrisTribute\TetrisTribute\bin\x86\Debug\Content\MenuBG.xnb</Output>
+      <Time>2009-02-09T18:53:18-07:00</Time>
     </Item>
     <BuildSuccessful>true</BuildSuccessful>
     <Settings>
